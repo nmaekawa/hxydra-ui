@@ -41,7 +41,7 @@
                      </v-card-text>
                      <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" to="/">Login</v-btn>
+                        <v-btn color="primary" href="/projects">Login</v-btn>
                      </v-card-actions>
                   </v-card>
         </v-form>
