@@ -101,7 +101,7 @@
             v-model="newChoice"
             :placeholder="'Add new ' + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_name : 'Choice')"
           ></v-text-field>
-          <v-btn color="primary" class="mr-5" @click="addChoicePopup()">Add</v-btn>
+          <v-btn color="#483682" dark class="mr-5" @click="addChoicePopup()">Add</v-btn>
           <v-btn @click="add = false">Cancel</v-btn>
         </v-container>
       </v-card>
@@ -128,7 +128,7 @@
             v-model="newJobTitle"
             placeholder="Job Title"
           ></v-text-field>
-          <v-btn color="primary" class="mr-5" @click="editMode = true; addNewPerson()">Add</v-btn>
+          <v-btn color="#483682" dark class="mr-5" @click="editMode = true; addNewPerson()">Add</v-btn>
           <v-btn @click="addPeople = false">Cancel</v-btn>
         </v-container>
       </v-card>

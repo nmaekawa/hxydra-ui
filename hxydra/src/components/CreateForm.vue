@@ -6,8 +6,9 @@
       {{ errorMessage }}
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="primary"
+          color="#483682"
           text
+          dark
           v-bind="attrs"
           @click="errorBox = false"
         >
@@ -172,7 +173,8 @@
       <v-row>
         <v-col>
           <v-btn
-            color="primary"
+            color="#483682"
+            dark
             @click="createProject"
           >Create</v-btn>
         </v-col>

@@ -2,7 +2,7 @@
   <v-container>
     <v-snackbar
       v-model="errorBox"
-      centered
+      top
       elevation="10"
       color="error"
     >
@@ -116,6 +116,52 @@
         </tr>
       </template>
     </v-data-table>
+    <v-dialog
+      v-model="debugDialog"
+      max-width="600px"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          fab
+          dark
+          small
+          fixed
+          bottom
+          right
+          color="green"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon small>mdi-bug</v-icon>
+        </v-btn>
+      </template>
+      <v-card>
+        <v-card-title>
+          Debug API
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col
+                cols="12"
+              >
+                <v-text-field label="Project List API URL" v-model="api_projects_url" @input="getProjects"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="debugDialog = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -136,6 +182,7 @@
       rowItem: undefined,
       errorMessage: "",
       errorBox: false,
+      debugDialog: false,
       headers: [{
         text: 'Nickname',
         sortable: true,
@@ -162,6 +209,7 @@
         align: 'center',
         width: '10%'
       }],
+      api_projects_url: 'http://localhost:8000/catalog/project/',
       projects: [{
         nickname: 'HIN_v1',
         title: "Health in Numbers: Quantitative Methods in Clinical & Public Health Research",
@@ -195,7 +243,7 @@
         const self = this
         await this.$http.get(
           // process.env.BASE_URL + 'tablelist.json'
-          'http://localhost:8000/catalog/project/'
+          self.api_projects_url
         )
           .then(data => self.projects = data)
           .catch(function(e) {

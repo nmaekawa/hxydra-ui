@@ -19,7 +19,7 @@
       >
         <v-form>
           <v-card class="elevation-12">
-                     <v-toolbar dark color="primary">
+                     <v-toolbar dark color="#483682">
                         <v-toolbar-title>Login</v-toolbar-title>
                      </v-toolbar>
                      <v-card-text>
@@ -41,7 +41,7 @@
                      </v-card-text>
                      <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" href="/projects">Login</v-btn>
+                        <v-btn color="#483682" href="/projects" dark>Login</v-btn>
                      </v-card-actions>
                   </v-card>
         </v-form>

@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
+      color="#483682"
       dark
     >
       <div class="d-flex align-center">
@@ -17,7 +17,7 @@
         dark
         small
         href="/projects"
-        color="light-blue accent"
+        color="#483682 accent"
       >
         <v-icon>
           mdi-home
