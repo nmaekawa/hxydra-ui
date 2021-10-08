@@ -15,5 +15,11 @@ module.exports = {
       title: 'Projects',
       chunks: ['chunk-vendors', 'chunk-common', 'projects']
     },
+    'create': {
+      entry: './src/pages/create/main.js',
+      template: 'public/create.html',
+      title: 'Create Course',
+      chunks: ['chunk-vendors', 'chunk-common', 'create']
+    },
   }
 }
