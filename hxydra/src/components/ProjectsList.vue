@@ -1,5 +1,23 @@
 <template>
   <v-container>
+    <v-snackbar
+      v-model="errorBox"
+      centered
+      elevation="10"
+      color="error"
+    >
+      {{ errorMessage }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="errorBox = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-dialog
       v-model="editing"
       width="80%"
@@ -110,6 +128,8 @@
       selected: undefined,
       detail: undefined,
       rowItem: undefined,
+      errorMessage: "",
+      errorBox: false,
       headers: [{
         text: 'Nickname',
         sortable: true,
@@ -166,12 +186,18 @@
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
       },
       async getProjects () {
-        
-        const { data } = await this.$http.get(
+        const self = this
+        await this.$http.get(
           // process.env.BASE_URL + 'tablelist.json'
           'http://localhost:8000/catalog/project/'
-        );
-        this.projects = data;
+        )
+          .then(data => self.projects = data)
+          .catch(function(e) {
+            self.errorBox = true
+            self.errorMessage = "API could not be reached. Using fake data."
+            console.log(e)
+          });
+        
       },
       async getItemDetail ( item ) {
         //eventually this should call a new API call that gets the full detail info on the row selected
