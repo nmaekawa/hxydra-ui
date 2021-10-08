@@ -6,7 +6,7 @@
       dark
     >
       <div class="d-flex align-center">
-        <div class="text-h4 font-weight-bold">Projects</div>
+        <div class="text-h4 font-weight-bold">Configure Lists</div>
       </div>
 
       <v-spacer></v-spacer>
@@ -16,41 +16,29 @@
         fab
         dark
         small
-        href="/create"
+        href="/projects"
         color="light-blue accent"
       >
         <v-icon>
-          mdi-plus
-        </v-icon>
-      </v-btn>
-      <v-btn
-        class="mx-1"
-        fab
-        dark
-        small
-        href="/choice/"
-        color="light-blue accent"
-      >
-        <v-icon>
-          mdi-cog
+          mdi-home
         </v-icon>
       </v-btn>
     </v-app-bar>
 
     <v-main>
-      <ProjectsList/>
+      <Choice/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import ProjectsList from '../../components/ProjectsList';
+import Choice from '../../components/Choice';
 
 export default {
   name: 'App',
 
   components: {
-    ProjectsList,
+    Choice,
   },
 
   data: () => ({

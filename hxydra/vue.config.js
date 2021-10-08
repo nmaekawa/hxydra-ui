@@ -21,5 +21,11 @@ module.exports = {
       title: 'Create Course',
       chunks: ['chunk-vendors', 'chunk-common', 'create']
     },
+    'choice': {
+      entry: './src/pages/choice/main.js',
+      template: 'public/choice.html',
+      title: 'Configure Choice Lists',
+      chunks: ['chunk-vendors', 'chunk-common', 'choice']
+    },
   }
 }
