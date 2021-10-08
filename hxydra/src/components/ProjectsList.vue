@@ -24,6 +24,7 @@
       style="background: white"
     >
       <v-card>
+        <EditForm :course="selected" @closeEdit="closeEdit"/>
       </v-card>
     </v-dialog>
     <v-dialog
@@ -50,6 +51,7 @@
           </v-icon>
         </v-btn>
         </v-toolbar>
+        <DetailView :course="selected"/>
       </v-card>
     </v-dialog>
     <v-data-table
@@ -118,9 +120,13 @@
 </template>
 
 <script>
+  import EditForm from './EditForm'
+  import DetailView from './DetailView'
   export default {
     name: 'ProjectsList',
     components: {
+      EditForm,
+      DetailView
     },
     data: () => ({
       search: '',
@@ -201,14 +207,16 @@
       },
       async getItemDetail ( item ) {
         //eventually this should call a new API call that gets the full detail info on the row selected
-        const { data } = await this.$http.get(
+        await this.$http.get(
           'http://localhost:8000/catalog/project/' + item.nickname
           + '/'
           // process.env.BASE_URL + 'detailed_view.json'
-        );
-        this.selected = data;
-        this.editing = true;
-        console.log(item)
+        )
+          .then(data => this.selected = data)
+          .then(() => this.editing = true)
+          .catch(function(e) {
+            console.log("Big ol error", e)
+          })
       },
       editItem (item) {
         this.getItemDetail(item);
