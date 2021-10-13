@@ -32,7 +32,7 @@
       width="80%"
       style="background: white"
     >
-      <v-card>
+      <v-card v-if="selected">
         <v-toolbar dense>
           <v-btn
             class="ma-2"
@@ -242,7 +242,6 @@
       async getProjects () {
         const self = this
         await this.$http.get(
-          // process.env.BASE_URL + 'tablelist.json'
           self.api_projects_url
         )
           .then(data => self.projects = data)
@@ -254,38 +253,47 @@
         
       },
       async getItemDetail ( item ) {
-        //eventually this should call a new API call that gets the full detail info on the row selected
+        const self = this
         await this.$http.get(
-          'http://localhost:8000/catalog/project/' + item.nickname
+          self.api_projects_url + item.nickname
           + '/'
-          // process.env.BASE_URL + 'detailed_view.json'
         )
           .then(data => this.selected = data)
-          .then(() => this.editing = true)
           .catch(function(e) {
-            console.log("Big ol error", e)
+            self.errorBox = true
+            self.errorMessage = `API could not be reached. Data for ${item.nickname} was not retrieved.`
+            console.log(e)
           })
       },
       editItem (item) {
-        this.getItemDetail(item);
+        this.getItemDetail(item)
+          .then(() => this.editing = true)
+          .then(() => this.detail = false)
+
       },
       async viewDetail (item) {
-        const { data } = await this.$http.get(
-          process.env.BASE_URL + 'detailed_view.json'
-        );
-        this.selected = data
-        this.detail = true
-        this.rowItem = item
-        console.log(item, data)
+        this.getItemDetail(item)
+          .then(() => this.rowItem = item)
+          .then(() => this.detail = true)
+          .then(() => this.editing = false)
       },
-      deleteItem (item) {
-        console.log(item)
-        this.projects = this.projects.filter(e => e.nickname !== item.nickname)
-        this.detail = false
-        console.log(item)
+      async deleteItem (item) {
+        await this.$http.delete(
+          self.api_projects_url + item.nickname
+          + '/'
+        )
+          .then(() => this.projects = this.projects.filter(e => e.nickname !== item.nickname))
+          .then(() => this.detail = false)
+          .then(() => this.selected = undefined)
+          .catch(function(e) {
+            self.errorBox = true
+            self.errorMessage = `API could not be reached. Data for ${item.nickname} was not deleted.`
+            console.log(e)
+          })
       },
       closeEdit () {
         this.editing = false
+        this.selected = false
       }
     },
     mounted() {
