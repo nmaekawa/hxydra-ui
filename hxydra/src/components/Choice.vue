@@ -133,6 +133,59 @@
         </v-container>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="debugDialog"
+      max-width="600px"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          fab
+          dark
+          small
+          fixed
+          bottom
+          right
+          color="green"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon small>mdi-bug</v-icon>
+        </v-btn>
+      </template>
+      <v-card>
+        <v-card-title>
+          Debug API
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col
+                cols="12"
+              >
+                <v-text-field label="API URL Prefix" v-model="api_url_prefix" @input="getChoices"></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col
+                cols="12"
+              >
+                <v-text-field label="People API URL Prefix" v-model="people_api_url" @input="getPeople"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="debugDialog = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -183,6 +236,9 @@
         sortable: false,
         align: 'center',
       }],
+      api_url_prefix: 'http://localhost:8000/catalog/',
+      people_api_url: 'http://localhost:8000/people/',
+      debugDialog: false,
       newFirstName: '',
       newLastName: '',
       newJobTitle: '',
@@ -224,18 +280,18 @@
       getChoices () {
         // TODO: Try to get all these list values in one go
         for (const s of this.setup_options) {
-          this.getListFromAPI('http://localhost:8000/catalog/'+s['tech_name']+'/')
+          this.getListFromAPI(this.api_url_prefix +s['tech_name']+'/')
             .then(e => this[s['tech_name']] = e.map(f => f[s['key']]))
             .then(g => this.values[s['tech_name']] = g)
         }
       },
       addChoicePopup () {
-        console.log(this.newChoice, 'http://localhost:8000/catalog/'+this.choiceSelected+'/')
+        console.log(this.newChoice, this.api_url_prefix + this.choiceSelected+'/')
         let options = {}
         options[this.setup_options.filter( e => e.tech_name == this.choiceSelected)[0].key] = this.newChoice
         console.log(options)
         this.$http.post(
-          'http://localhost:8000/catalog/'+this.choiceSelected+'/',
+          this.api_url_prefix + this.choiceSelected+'/',
           options
         )
           .then(e => console.log(e))
@@ -299,7 +355,7 @@
         console.log(this.choiceSelected)
         console.log(this.awaitingDelete)
         await this.$http.delete(
-          'http://localhost:8000/catalog/' + this.choiceSelected + '/' + this.awaitingDelete.toLowerCase().replace(' ', '-') + '/'
+          this.api_url_prefix + this.choiceSelected + '/' + this.awaitingDelete.toLowerCase().replace(' ', '-') + '/'
         )
           .then(e => {
             console.log('Worked', e)
@@ -323,7 +379,7 @@
       async getPeople () {
         //eventually this should call a new API call that gets the full list of people
         const { data } = await this.$http.get(
-          process.env.BASE_URL + 'people.json'
+          this.people_api_url
         );
         this.people = data
         console.log(data)
