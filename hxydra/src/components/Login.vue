@@ -24,19 +24,28 @@
                      </v-toolbar>
                      <v-card-text>
                         <v-form>
-                           <v-text-field
-                              prepend-icon="mdi-account"
-                              name="username"
-                              label="username"
-                              type="text"
-                           ></v-text-field>
-                           <v-text-field
-                              id="password"
-                              prepend-icon="mdi-lock"
-                              name="password"
-                              label="password"
-                              type="password"
-                           ></v-text-field>
+                          <v-container>
+                            <v-row>
+                              <v-col>
+                               <v-text-field
+                                  prepend-icon="mdi-account"
+                                  name="username"
+                                  label="username"
+                                  type="text"
+                               ></v-text-field>
+                              </v-col>
+                            </v-row>
+                            <v-row>
+                              <v-col>
+                               <v-text-field
+                                  prepend-icon="mdi-lock"
+                                  name="password"
+                                  label="password"
+                                  type="password"
+                               ></v-text-field>
+                             </v-col>
+                            </v-row>
+                          </v-container>
                         </v-form>
                      </v-card-text>
                      <v-card-actions>

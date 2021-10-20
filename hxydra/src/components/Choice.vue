@@ -204,7 +204,6 @@
         sortable: true,
         value: 'value'
       }],
-      values: {},
       search: '',
       idRef: '',
       enrollmenttype: [],
@@ -213,8 +212,7 @@
       deliveryplatform: [],
       school: [],
       //affiliations: [],
-      hxdiscipline: [],
-      edxdiscipline: [],
+      platformdiscipline: [],
       projectstatus: [],
       choiceSelected: undefined,
       awaitingDelete: undefined,
@@ -236,8 +234,8 @@
         sortable: false,
         align: 'center',
       }],
-      api_url_prefix: 'http://localhost:8000/catalog/',
-      people_api_url: 'http://localhost:8000/people/',
+      api_url_prefix: 'https://devo2.hxydra.hxtech.org/v1/catalog/',
+      people_api_url: 'https://devo2.hxydra.hxtech.org/v1/catalog/person/',
       debugDialog: false,
       newFirstName: '',
       newLastName: '',
@@ -259,12 +257,8 @@
         'tech_name': 'school',
         'key': 'school'
       }, {
-        'proper_name': 'Discipline',
-        'tech_name': 'hxdiscipline',
-        'key': 'name'
-      }, {
-        'proper_name': 'edX Subject',
-        'tech_name': 'edxdiscipline',
+        'proper_name': 'Platform Discipline',
+        'tech_name': 'platformdiscipline',
         'key': 'name'
       }, {
         'proper_name': 'Project Status',
@@ -280,9 +274,18 @@
       getChoices () {
         // TODO: Try to get all these list values in one go
         for (const s of this.setup_options) {
-          this.getListFromAPI(this.api_url_prefix +s['tech_name']+'/')
-            .then(e => this[s['tech_name']] = e.map(f => f[s['key']]))
-            .then(g => this.values[s['tech_name']] = g)
+          console.log("what")
+          this.$http.get(this.api_url_prefix +s['tech_name']+'/')
+            .then(e => {
+              console.log('woo', e)
+              this[s['tech_name']] = e.data.map(f => f[s['key']])
+              console.log("wee", this[s['tech_name']])
+            })
+            //.then(g => this.values[s['tech_name']] = g)
+        }
+        console.log(this.values)
+        this.values = {
+          'role': ['test1', 'test2']
         }
       },
       addChoicePopup () {
@@ -341,7 +344,6 @@
           }
         }
         this.$set(this.people, foundIndex, found)
-        console.log(this.people, foundIndex, found)
         this.addPeople = false
         this.choiceSelected = ''
         this.newFirstName = ''
@@ -370,19 +372,19 @@
           })
           .catch(e => console.log('Error', e))
       },
-      async getListFromAPI (apiurl) {
-        const { data } = await this.$http.get(
-          apiurl
-        )
-        return data
+      async getListFromAPI () {
+        // return await this.$http.get(
+        //   apiurl
+        // ).then(data => console.log(data.data))
       },
       async getPeople () {
         //eventually this should call a new API call that gets the full list of people
-        const { data } = await this.$http.get(
+        await this.$http.get(
           this.people_api_url
-        );
-        this.people = data
-        console.log(data)
+        ).then(data => {
+          this.people = data.data
+        })
+        
       },
       filter (value, search) {
         return value != null &&
@@ -394,6 +396,16 @@
     mounted() {
       this.getChoices()
       this.getPeople()
+    },
+    computed: {
+      values() {
+        let newValues = {}
+        for (const s of this.setup_options) {
+          newValues[s['tech_name']] = this[s['tech_name']]
+        }
+        console.log('soooo', newValues)
+        return newValues
+      }
     }
   }
 </script>

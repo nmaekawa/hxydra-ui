@@ -246,7 +246,7 @@
           }
           let self = this
           this.$http.post(
-            'http://localhost:8000/catalog/project/init/',
+            'https://devo2.hxydra.hxtech.org/v1/catalog/project/',
             options
           )
             .then(() => window.location.href = 'http://localhost:8080/projects/')

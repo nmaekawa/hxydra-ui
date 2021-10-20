@@ -72,7 +72,7 @@
       <template v-slot:top>
         <v-text-field
           v-model="search"
-          label="Search"
+          label="Search me"
           class="mx-4"
         ></v-text-field>
       </template>
@@ -85,10 +85,10 @@
             {{item['title']}}
           </td>
           <td>
-            {{item['launchDate']}}
+            {{item['launch_date']}}
           </td>
           <td>
-            {{item['endDate']}}
+            {{item['end_date']}}
           </td>
           <td>
             <v-container>
@@ -196,12 +196,12 @@
       },{
         text: 'Launch Date',
         sortable: true,
-        value: 'launchDate',
+        value: 'launch_date',
         width: '15%'
       },{
         text: 'End Date',
         sortable: true,
-        value: 'endDate',
+        value: 'end_date',
         width: '10%'
       }, {
         text: 'Actions',
@@ -209,27 +209,27 @@
         align: 'center',
         width: '10%'
       }],
-      api_projects_url: 'http://localhost:8000/catalog/project/',
+      api_projects_url: 'https://devo2.hxydra.hxtech.org/v1/catalog/project/',
       projects: [{
         nickname: 'HIN_v1',
         title: "Health in Numbers: Quantitative Methods in Clinical & Public Health Research",
-        launchDate: '2012-10-15',
-        endDate: '',
+        launch_date: '2012-10-15',
+        end_date: '',
       }, {
         nickname: 'CS50x_v1',
-        launchDate: '2012-10-15',
+        launch_date: '2012-10-15',
         title:  'CS50\'s Introduction to Computer Science',
-        endDate: '',
+        end_date: '',
       }, {
         nickname: 'Copy_v1',
-        launchDate: '2013-01-18',
+        launch_date: '2013-01-18',
         title:  'Copyright',
-        endDate: '',
+        end_date: '',
       }, {
         nickname: 'Anat_v1_02',
-        launchDate: '2023-06-23',
+        launch_date: '2023-06-23',
         title:  'Human Anatomy: Musculoskeletal Cases',
-        endDate: '',
+        end_date: '',
       }]
     }),
     methods: {
@@ -244,7 +244,10 @@
         await this.$http.get(
           self.api_projects_url
         )
-          .then(data => self.projects = data)
+          .then(data => {
+            console.log(data)
+            self.projects = data.data
+          })
           .catch(function(e) {
             self.errorBox = true
             self.errorMessage = "API could not be reached. Using fake data."
@@ -258,7 +261,7 @@
           self.api_projects_url + item.nickname
           + '/'
         )
-          .then(data => this.selected = data)
+          .then(data => this.selected = data.data)
           .catch(function(e) {
             self.errorBox = true
             self.errorMessage = `API could not be reached. Data for ${item.nickname} was not retrieved.`
