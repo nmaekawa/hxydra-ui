@@ -246,11 +246,11 @@
             cert_available: this.cert_available
           }
           let self = this
-          this.$http.put(
+          this.$http.post(
             'https://devo2.hxydra.hxtech.org/v1/catalog/project/',
             options
           )
-            .then(() => window.location.href = 'http://localhost:8080/projects/')
+            .then(() => window.location.href = window.location.protocol + '//' + window.location.host + '/projects/')
             .catch(function(e) {
               self.errorBox = true
               let mess = `(${e.response.status}) ${e.response.statusText}`
