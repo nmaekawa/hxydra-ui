@@ -2,6 +2,7 @@
   <v-card class="mx-10 px-10">
     <v-snackbar
       v-model="errorBox"
+      data-testid="errorBox"
     >
       {{ errorMessage }}
       <template v-slot:action="{ attrs }">
@@ -245,7 +246,7 @@
             cert_available: this.cert_available
           }
           let self = this
-          this.$http.post(
+          this.$http.put(
             'https://devo2.hxydra.hxtech.org/v1/catalog/project/',
             options
           )
