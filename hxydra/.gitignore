@@ -21,3 +21,18 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+coverage
+coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/

@@ -6,6 +6,7 @@ import Vuetify from 'vuetify'
 Vue.use(Vuetify)
 
 describe('CreateForm.vue', () => {
+  let wrapper
   beforeEach(() => {
     const breakpoint = {
       init: jest.fn(),
@@ -14,7 +15,7 @@ describe('CreateForm.vue', () => {
     }
     const vuetify = new Vuetify()
     vuetify.framework.breakpoint = breakpoint
-    const wrapper = render(CreateForm, {
+    wrapper = render(CreateForm, {
       vuetify,
     })
   })
@@ -34,7 +35,7 @@ describe('CreateForm.vue', () => {
     screen.getByLabelText('Estimated Max hrs per week')
     screen.getByLabelText('Certificate?')
   })
-  
+
   it('calculates nickname', async () => {
     // get items that change nickname
     let prefix = screen.getByLabelText('Project Prefix')
@@ -56,5 +57,17 @@ describe('CreateForm.vue', () => {
     await fireEvent.update(rno, 2)
     await fireEvent.update(sno, 3)
     screen.getByText(/TestX_3_v1_r2/)
+  })
+
+  it('checks for sequence number', async () => {
+    let cno = screen.getByLabelText('Add sequence #')
+    await fireEvent.click(cno)
+    let sno = screen.getByLabelText('Sequence Number')
+    await fireEvent.update(sno, '')
+    await Vue.nextTick()
+    screen.getByText(/zero/i)
+    await fireEvent.update(sno, 1)
+    await Vue.nextTick()
+    // to finish up later
   })
 })
