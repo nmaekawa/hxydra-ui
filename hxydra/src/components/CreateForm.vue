@@ -50,17 +50,8 @@
               required
             ></v-text-field>
           </v-col>
-          <v-col class="col-3">
-            <v-checkbox
-              v-model="add_seq"
-              label="Add sequence #"
-              @click="sequence_num = 1"
-            >
-            </v-checkbox>
-          </v-col>
           <v-col class="col-2">
             <v-text-field
-              v-if="add_seq"
               v-model="sequence_num"
               label="Sequence Number"
               :rules="posIntRules"
@@ -289,10 +280,7 @@
       },
       nickname() {
 
-        let sequence_val = ""
-        if (this.add_seq) {
-          sequence_val = "_" + this.sequence_num
-        }
+        let sequence_val = "_" + this.sequence_num
         return this.prefix + sequence_val + "_v" + this.version + "_r" + this.run
       },
       nicknameRules () {
