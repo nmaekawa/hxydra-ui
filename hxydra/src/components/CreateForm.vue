@@ -247,7 +247,7 @@
           }
           let self = this
           this.$http.post(
-            'https://devo2.hxydra.hxtech.org/v1/catalog/project/',
+            'https://naomi.hxydra.hxtech.org/v1/catalog/project/',
             options
           )
             .then(() => window.location.href = window.location.protocol + '//' + window.location.host + '/projects/')

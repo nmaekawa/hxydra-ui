@@ -209,7 +209,7 @@
         align: 'center',
         width: '10%'
       }],
-      api_projects_url: 'https://devo2.hxydra.hxtech.org/v1/catalog/project/',
+      api_projects_url: 'https://naomi.hxydra.hxtech.org/v1/catalog/project/',
       projects: [{
         nickname: 'HIN_v1',
         title: "Health in Numbers: Quantitative Methods in Clinical & Public Health Research",
