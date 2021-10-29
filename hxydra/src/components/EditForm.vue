@@ -37,7 +37,7 @@
         <v-row>
           <v-col class="col-12">
             <v-text-field
-              v-model="course.projectTitle"
+              v-model="course.title"
               label="Project Name"
               required
             ></v-text-field>
@@ -81,7 +81,7 @@
                   </v-text-field>
                 </template>
                 <v-date-picker
-                  v-model="course.launchDate"
+                  v-model="course.launch_date"
                   no-title
                   @change="launchDatePop = false"
                 >
@@ -108,7 +108,7 @@
                   </v-text-field>
                 </template>
                 <v-date-picker
-                  v-model="course.endDate"
+                  v-model="course.end_date"
                   no-title
                   @change="endDatePop = false"
                 >
@@ -149,7 +149,7 @@
         <v-row>
           <v-col class="col-3">
             <v-select
-              :items="statuses"
+              :items="projectstatus"
               label="Status"
               v-model="course.status"
               multiple
@@ -209,28 +209,28 @@
         <v-row>
           <v-col class="col-3">
             <v-select
-              :items="enrollmentTypes"
-              label="Project Type"
+              :items="enrollmenttype"
+              label="Enrollment Type"
               v-model="course.enrollmentType"
             ></v-select>
           </v-col>
           <v-col class="col-3">
             <v-select
-              :items="dPlatforms"
+              :items="deliveryplatform"
               label="Delivery Platform"
               v-model="course.deliveryPlatform"
             ></v-select>
           </v-col>
           <v-col class="col-3">
             <v-select
-              :items="tPlatforms"
+              :items="technicalplatform"
               label="Technical Platform"
               v-model="course.technicalPlatform"
             ></v-select>
           </v-col>
           <v-col class="col-3">
             <v-select
-              :items="revenueSchools"
+              :items="school"
               label="Revenue Schools"
               v-model="course.revenueSchool"
               multiple
@@ -238,7 +238,7 @@
           </v-col>
           <v-col class="col-3">
             <v-select
-              :items="affiliations"
+              :items="school"
               label="Affiliation"
               v-model="course.affiliation"
               multiple
@@ -246,7 +246,7 @@
           </v-col>
           <v-col class="col-3">
             <v-select
-              :items="disciplines"
+              :items="platformdiscipline"
               label="Discipline(s)"
               v-model="course.discipline"
               multiple
@@ -254,7 +254,7 @@
           </v-col>
           <v-col class="col-3">
             <v-select
-              :items="edXSubjects"
+              :items="platformdiscipline"
               label="edX Subjects"
               v-model="course.edXSubject"
               multiple
@@ -422,6 +422,7 @@
     </v-form>
     <v-btn
       color="primary"
+      @click="saveChanges"
     >Create</v-btn>
     <v-btn @click="closeEdit">Cancel</v-btn>
   </v-container>
@@ -440,13 +441,11 @@
     },
     data: () => ({
       enrollmentTypes: [],
-      tPlatforms: [],
-      dPlatforms: [],
       revenueSchools: [],
       affiliations: [],
       disciplines: [],
       edXSubjects: [],
-      statuses: [],
+      roles: [],
       launchDatePop: false,
       endDatePop: false,
       publishedDatePop: false,
@@ -466,6 +465,43 @@
       }],
       searchTeam: '',
       people: [],
+      setup_options: [{
+        'proper_name': 'Enrollment Type',
+        'tech_name': 'enrollmenttype',
+        'key': 'name',
+      }, {
+        'proper_name': 'Technical Platform',
+        'tech_name': 'technicalplatform',
+        'key': 'name'
+      }, {
+        'proper_name': 'Delivery Platform',
+        'tech_name': 'deliveryplatform',
+        'key': 'name'
+      }, {
+        'proper_name': 'School',
+        'tech_name': 'school',
+        'key': 'school'
+      }, {
+        'proper_name': 'Platform Discipline',
+        'tech_name': 'platformdiscipline',
+        'key': 'name'
+      }, {
+        'proper_name': 'Project Status',
+        'tech_name': 'projectstatus',
+        'key': 'name'
+      }, {
+        'proper_name': 'Role',
+        'tech_name': 'role',
+        'key': 'name'
+      }],
+      enrollmenttype: [],
+      technicalplatform: [],
+      deliveryplatform: [],
+      school: [],
+      platformdiscipline: [],
+      projectstatus: [],
+      api_url_prefix: 'https://naomi.hxydra.hxtech.org/v1/catalog/',
+      people_api_url: 'https://naomi.hxydra.hxtech.org/v1/catalog/person/',
       // course: {
       //   id: 'auto_id',
       //   created: 'date',
@@ -508,15 +544,17 @@
     }),
     methods: {
       getChoices () {
-        this.enrollmentTypes = ['', 'Open', 'Limited', 'Other', 'Audit']
-        this.tPlatforms = ['edX', 'edX White Label', 'Canvas', 'HBSO', 'Other']
-        this.dPlatforms = ['edX', 'edge.edX', 'HXPLUS', 'i-book', 'e-book', 'Other', 'GetSmarter', 'HBSO']
-        this.revenueSchools = ['HSPH']
-        this.affiliations = ['Harvard Business School', 'Harvard School of Public Health']
-        this.disciplines = ['Architecture', 'Health Sciences']
-        this.edXSubjects = []
-        this.statuses = ['Active', 'Archive', 'Closed', 'Cancelled', 'Paused', 'Seedling', 'LOI', 'Proposal', 'In Development', 'Maintenance']
-        this.roles = ['Project Lead', 'Lead Faculty', 'edX PM', 'Manager', 'Video Editor']
+        // TODO: Try to get all these list values in one go
+        for (const s of this.setup_options) {
+          console.log("what")
+          this.$http.get(this.api_url_prefix +s['tech_name']+'/')
+            .then(e => {
+              console.log('woo', e)
+              this[s['tech_name']] = e.data.map(f => f[s['key']])
+              console.log("wee", this[s['tech_name']])
+            })
+            //.then(g => this.values[s['tech_name']] = g)
+        }
       },
       getVersionNum (nickname) {
         const regEx = /_v([0-9]+)/g
@@ -540,6 +578,18 @@
       closeEdit () {
         console.log("Emitting closeEdit")
         this.$emit('closeEdit', '')
+      },
+      saveChanges () {
+        this.$http.put(
+            'https://naomi.hxydra.hxtech.org/v1/catalog/project/' + this.course.nickname + '/',
+          ).then(data => {
+            console.log("Updated", data)
+          }).catch(e => {
+            console.log(e)
+          }).finally( () => {
+            this.$emit('closeEdit', '')
+          })
+        
       }
     },
     mounted() {
@@ -548,10 +598,10 @@
     },
     computed: {
       launchDateDisplay() {
-        return this.course.launchDate
+        return this.course.launch_date
       },
       endDateDisplay() {
-        return this.course.endDate
+        return this.course.end_date
       },
       publishedDateDisplay() {
         return this.course.publishedDate
