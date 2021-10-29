@@ -7,7 +7,7 @@
       {{ errorMessage }}
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="#483682"
+          color="white"
           text
           dark
           v-bind="attrs"
@@ -29,6 +29,7 @@
               :counter="5"
               :rules="nicknameRules"
               label="Project Prefix"
+              hint="Cannot be changed after creation. Must be unique"
               required
             ></v-text-field>
           </v-col>
@@ -55,6 +56,7 @@
               v-model="sequence_num"
               label="Sequence Number"
               :rules="posIntRules"
+              hint="Still required for standalone courses"
               type="number"
               required
             ></v-text-field>
@@ -71,7 +73,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col class="col-4">
+          <v-col class="col-4 ml-3">
             <v-layout row wrap>
               <v-menu
                 v-model="launchDatePop"
@@ -87,6 +89,8 @@
                     prepend-icon="mdi-calendar-month"
                     :value="launchDateDisplay"
                     v-on="on"
+                    hint="Approximate date is acceptable, can be changed later."
+                    persistent-hint="true"
                   >
                   </v-text-field>
                 </template>
@@ -99,7 +103,7 @@
               </v-menu>
             </v-layout>
           </v-col>
-          <v-col class="col-4">
+          <v-col class="col-4 ml-5">
             <v-layout row wrap>
               <v-menu
                 v-model="endDatePop"
@@ -115,6 +119,8 @@
                     prepend-icon="mdi-calendar-month"
                     :value="endDateDisplay"
                     v-on="on"
+                    hint="Approximate date is acceptable, can be changed later."
+                    persistent-hint="true"
                   >
                   </v-text-field>
                 </template>
@@ -129,7 +135,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col class="col-3">
+          <!-- <v-col class="col-3">
             <v-text-field
               v-model="hrs_per_week_min"
               label="Estimated Min hrs per week"
@@ -144,7 +150,7 @@
               type="number"
               required
             ></v-text-field>
-          </v-col>
+          </v-col> -->
           <v-col class="col-6">
             <v-checkbox
               v-model="cert_available"
@@ -186,6 +192,7 @@
 
     data: () => ({
       prefix: 'XMple',
+      prefix_help: false,
       valid: false,
       created: 'date',
       created_by: 'string',
@@ -231,8 +238,8 @@
             sequence: this.sequence_num,
             launch_date: new Date(this.launch_date),
             end_date: new Date(this.end_date),
-            estimated_effort_min: this.hrs_per_week_min,
-            estimated_effort_max: this.hrs_per_week_max,
+            // estimated_effort_min: this.hrs_per_week_min,
+            // estimated_effort_max: this.hrs_per_week_max,
             nickname: this.nickname,
             cert_available: this.cert_available
           }
