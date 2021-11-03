@@ -35,32 +35,44 @@
           </v-col>
           <v-col class="col-2">
             <v-text-field
-              v-model="version"
-              label="Version Number"
-              type="number"
-              :rules="posIntRules"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col class="col-2">
-            <v-text-field
-              v-model="run"
-              label="Run Number"
-              type="number"
-              :rules="posIntRules"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col class="col-2">
-            <v-text-field
               v-model="sequence_num"
               label="Sequence Number"
               :rules="posIntRules"
               hint="Still required for standalone courses"
               type="number"
+              :disabled="!add_seq"
               required
             ></v-text-field>
           </v-col>
+          <v-col class="col-3">
+            <v-checkbox
+              v-model="add_seq"
+              label="Part of a sequence?"
+              @click="sequence_num = 1"
+            >
+            </v-checkbox>
+          </v-col>
+          <v-col class="col-2">
+            <v-text-field
+              v-model="version"
+              label="Version Number"
+              type="number"
+              :rules="posIntRules"
+              required
+              disabled
+            ></v-text-field>
+          </v-col>
+          <v-col class="col-2">
+            <v-text-field
+              v-model="run"
+              label="Rerun Number"
+              type="number"
+              :rules="posIntRules"
+              required
+              disabled
+            ></v-text-field>
+          </v-col>
+          
         </v-row>
         <v-row>
           <v-col class="col-12">
@@ -73,6 +85,16 @@
           </v-col>
         </v-row>
         <v-row>
+          <v-col class="col-12">
+            <v-text-field
+              label="Approximate Launch & End Date"
+              v-model="approx_date"
+              :disabled="launch_date.length > 0 || end_date.length > 0"
+
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row class="mb-10">
           <v-col class="col-4 ml-3">
             <v-layout row wrap>
               <v-menu
@@ -85,12 +107,14 @@
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    label="Launch Date"
+                    label="Exact Launch Date"
                     prepend-icon="mdi-calendar-month"
                     :value="launchDateDisplay"
                     v-on="on"
-                    hint="Approximate date is acceptable, can be changed later."
-                    persistent-hint="true"
+                    persistent-hint
+                    :disabled="approx_date.length > 0"
+                    clearable
+                    @click:clear="launch_date = ''"
                   >
                   </v-text-field>
                 </template>
@@ -115,12 +139,15 @@
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    label="End Date"
+                    label="Exact End Date"
                     prepend-icon="mdi-calendar-month"
-                    :value="endDateDisplay"
+                    :value="end_date"
                     v-on="on"
-                    hint="Approximate date is acceptable, can be changed later."
-                    persistent-hint="true"
+                    persistent-hint
+                    :disabled="approx_date.length > 0"
+                    clearable
+                    @click:clear="end_date = ''"
+                    v-on:keydown="preventBackspace"
                   >
                   </v-text-field>
                 </template>
@@ -151,13 +178,13 @@
               required
             ></v-text-field>
           </v-col> -->
-          <v-col class="col-6">
+          <!-- <v-col class="col-6">
             <v-checkbox
               v-model="cert_available"
               label="Certificate?"
             >
             </v-checkbox>
-          </v-col>
+          </v-col> -->
         </v-row>
         <v-row>
           <v-col class="green accent-1">
@@ -206,15 +233,15 @@
       //section_count: 'number',
       hrs_per_week_min: 1,
       hrs_per_week_max: 1,
-      launch_date: '2021-12-01',
-      end_date: '2022-12-01',
+      launch_date: '',
+      end_date: '',
       cert_available: true,
       is_public: 'boolean',
       is_active: 'boolean',
       url: 'string',
       rerun: 'string',
       version: 1,
-      run: 1,
+      run: 0,
       sequence_num: 1,
       revenue_school: 'string',
       types: [],
@@ -222,11 +249,20 @@
       endDatePop: false,
       add_seq: false,
       errorMessage: "",
-      errorBox: false
+      errorBox: false,
+      approx_date: "",
     }),
     methods: {
       getTypes () {
         this.types = ['course', 'modules']
+      },
+      preventBackspace (event) {
+        if (event.keyCode == 8) {
+          event.preventDefault()
+        }
+        if (event.keyCode == 46) {
+          event.preventDefault()
+        }
       },
       createProject () {
         if (this.validate()) {
@@ -286,9 +322,8 @@
         return this.end_date
       },
       nickname() {
-
         let sequence_val = "_" + this.sequence_num
-        return this.prefix + sequence_val + "_v" + this.version + "_r" + this.run
+        return this.prefix + sequence_val + "_v" + this.version + "_r" + this.run + this.launchDateDisplay.length
       },
       nicknameRules () {
         const rules = []

@@ -6,7 +6,7 @@
           {{item.proper_name}} <v-spacer/><v-btn :title="'Add new' + item.proper_name" max-width="30px" @click="add = !add; choiceSelected = item.tech_name" class="mr-10"><v-icon>mdi-plus</v-icon></v-btn>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-list-item v-for="e in values[item.tech_name]" v-bind:key="e">
+          <v-list-item v-for="e in values[item.tech_name]" v-bind:key="e.value">
             <v-list-item-content>
               <v-list-item-title>
                 <v-btn title="Edit" @click="choiceSelected = item.tech_name" class="" icon small>
@@ -15,7 +15,7 @@
                 <v-btn title="Delete" @click="awaitingDelete = e; choiceSelected = item.tech_name; deleteChoice()" class="mr-5" icon small>
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
-                {{ e }}
+                {{ e.value }} <span v-if="'par' in e">({{ e.par }})</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -255,11 +255,13 @@
       }, {
         'proper_name': 'School',
         'tech_name': 'school',
-        'key': 'school'
+        'key': 'school',
+        'par': 'fullname'
       }, {
         'proper_name': 'Platform Discipline',
         'tech_name': 'platformdiscipline',
-        'key': 'name'
+        'key': 'name',
+        'par': 'platform'
       }, {
         'proper_name': 'Project Status',
         'tech_name': 'projectstatus',
@@ -274,25 +276,30 @@
       getChoices () {
         // TODO: Try to get all these list values in one go
         for (const s of this.setup_options) {
-          console.log("what")
           this.$http.get(this.api_url_prefix +s['tech_name']+'/')
             .then(e => {
-              console.log('woo', e)
-              this[s['tech_name']] = e.data.map(f => f[s['key']])
-              console.log("wee", this[s['tech_name']])
+              console.log(e.data)
+              if ('par' in s){
+                this[s['tech_name']] = e.data.map(function(f) {
+                  return {
+                    'par': f[s['par']],
+                    'value': f[s['key']]
+                  }
+                })
+              } else {
+                this[s['tech_name']] = e.data.map(function(f) {
+                  return {
+                    'value': f[s['key']]
+                  }
+                })
+              }
             })
             //.then(g => this.values[s['tech_name']] = g)
         }
-        console.log(this.values)
-        this.values = {
-          'role': ['test1', 'test2']
-        }
       },
       addChoicePopup () {
-        console.log(this.newChoice, this.api_url_prefix + this.choiceSelected+'/')
         let options = {}
         options[this.setup_options.filter( e => e.tech_name == this.choiceSelected)[0].key] = this.newChoice
-        console.log(options)
         this.$http.post(
           this.api_url_prefix + this.choiceSelected+'/',
           options
@@ -354,17 +361,13 @@
         this.people = this.people.filter(e => e.id !== person.id)
       },
       async deleteChoice() {
-        console.log(this.choiceSelected)
-        console.log(this.awaitingDelete)
         await this.$http.delete(
           this.api_url_prefix + this.choiceSelected + '/' + this.awaitingDelete.toLowerCase().replace(' ', '-') + '/'
         )
           .then(e => {
             console.log('Worked', e)
             let cat = this.values[this.choiceSelected]
-            console.log(cat)
             cat = cat.filter(e => e !== this.awaitingDelete)
-            console.log(cat)
             this[this.choiceSelected] = cat
             this.values[this.choiceSelected] = cat
             this.choiceSelected = ''
@@ -403,7 +406,6 @@
         for (const s of this.setup_options) {
           newValues[s['tech_name']] = this[s['tech_name']]
         }
-        console.log('soooo', newValues)
         return newValues
       }
     }
