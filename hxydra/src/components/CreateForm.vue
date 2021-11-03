@@ -323,7 +323,7 @@
       },
       nickname() {
         let sequence_val = "_" + this.sequence_num
-        return this.prefix + sequence_val + "_v" + this.version + "_r" + this.run + this.launchDateDisplay.length
+        return this.prefix + sequence_val + "_v" + this.version + "_r" + this.run
       },
       nicknameRules () {
         const rules = []
