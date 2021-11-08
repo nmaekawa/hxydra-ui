@@ -99,7 +99,12 @@
         <v-container>
           <v-text-field
             v-model="newChoice"
-            :placeholder="'Add new ' + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_name : 'Choice')"
+            :label="'Add New ' + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_name : 'Choice')"
+          ></v-text-field>
+          <v-text-field
+            v-if="(choiceSelected ? 'par' in setup_options.filter(e => e.tech_name == choiceSelected)[0] : false)"
+            v-model="newPar"
+            :label="'Add New ' + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_par_name : 'Description')"
           ></v-text-field>
           <v-btn color="#483682" dark class="mr-5" @click="addChoicePopup()">Add</v-btn>
           <v-btn @click="add = false">Cancel</v-btn>
@@ -209,6 +214,7 @@
       enrollmenttype: [],
       technicalplatform: [],
       newChoice: undefined,
+      newPar: undefined,
       deliveryplatform: [],
       school: [],
       //affiliations: [],
@@ -234,8 +240,8 @@
         sortable: false,
         align: 'center',
       }],
-      api_url_prefix: 'https://naomi.hxydra.hxtech.org/v1/catalog/',
-      people_api_url: 'https://naomi.hxydra.hxtech.org/v1/catalog/person/',
+      api_url_prefix: 'https://devo2.hxydra.hxtech.org/v1/kondo/',
+      people_api_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/person/',
       debugDialog: false,
       newFirstName: '',
       newLastName: '',
@@ -255,13 +261,15 @@
       }, {
         'proper_name': 'School',
         'tech_name': 'school',
-        'key': 'school',
-        'par': 'fullname'
+        'key': 'name',
+        'par': 'description',
+        'proper_par_name': 'Full School Name'
       }, {
         'proper_name': 'Platform Discipline',
         'tech_name': 'platformdiscipline',
         'key': 'name',
-        'par': 'platform'
+        'par': 'platform',
+        'proper_par_name': 'Platform Name'
       }, {
         'proper_name': 'Project Status',
         'tech_name': 'projectstatus',
@@ -299,18 +307,38 @@
       },
       addChoicePopup () {
         let options = {}
-        options[this.setup_options.filter( e => e.tech_name == this.choiceSelected)[0].key] = this.newChoice
+        let hasPar = false
+        let choice = this.setup_options.filter( e => e.tech_name == this.choiceSelected)[0]
+        options[choice.key] = this.newChoice
+        if ('par' in choice) {
+          options[choice.par] = this.newPar
+          hasPar = true
+        }
         this.$http.post(
           this.api_url_prefix + this.choiceSelected+'/',
           options
         )
-          .then(e => console.log(e))
+          .then(data => {
+            let chosen = this.values[this.choiceSelected]
+            if (hasPar) {
+              chosen.push({
+                'value': this.newChoice,
+                'par': this.newPar
+              })
+            } else {
+              chosen.push({
+                'value': this.newChoice
+              })
+
+            }
+            this.add = false
+            this.newChoice = ''
+            this.newPar = ''
+            this.choiceSelected = ''
+            console.log(data)
+          })
           .catch(e => console.log(e))
-        let chosen = this.values[this.choiceSelected]
-        chosen.push(this.newChoice)
-        this.add = false
-        this.newChoice = ''
-        this.choiceSelected = ''
+        
       },
       addNewPerson () {
         if (this.editMode) {

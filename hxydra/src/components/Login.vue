@@ -4,7 +4,7 @@
 
       <v-col class="mb-4 mt-15" cols="12">
         <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to Hxydra
+          Welcome to Kondo
         </h1>
 
         <p class="subheading font-weight-regular">

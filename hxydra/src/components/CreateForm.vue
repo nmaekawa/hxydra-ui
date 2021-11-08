@@ -251,6 +251,7 @@
       errorMessage: "",
       errorBox: false,
       approx_date: "",
+      api_url: "https://devo2.hxydra.hxtech.org/v1/kondo/project/"
     }),
     methods: {
       getTypes () {
@@ -265,6 +266,7 @@
         }
       },
       createProject () {
+        console.log(this.api_url, this.$refs.createform)
         if (this.validate()) {
           let options = {
             prefix: this.prefix,
@@ -281,7 +283,7 @@
           }
           let self = this
           this.$http.post(
-            'https://naomi.hxydra.hxtech.org/v1/catalog/project/',
+            this.api_url,
             options
           )
             .then(() => window.location.href = window.location.protocol + '//' + window.location.host + '/projects/')
@@ -308,6 +310,7 @@
         }
       },
       validate () {
+        console.log(this.$refs.createform.validate())
         return this.$refs.createform.validate()
       }
     },
@@ -335,7 +338,7 @@
       },
       posIntRules () {
         const rules = []
-        const ruleMin = v => v > 0 || 'Cannot be zero or negative'
+        const ruleMin = v => v > -1 || 'Cannot be negative'
         rules.push(ruleMin)
         return rules
       },

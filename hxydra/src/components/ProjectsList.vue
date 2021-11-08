@@ -1,5 +1,6 @@
 <template>
   <v-container>
+
     <v-snackbar
       v-model="errorBox"
       top
@@ -54,68 +55,75 @@
         <DetailView :course="selected"/>
       </v-card>
     </v-dialog>
-    <v-data-table
-      :headers="headers"
-      :items="projects"
-      :items-per-page="50"
-      class="projects-1"
-      :search="search"
-      :custom-filter="filter"
-      :footer-props="{
-        showFirstLastPage: true,
-        firstIcon: 'mdi-arrow-collapse-left',
-        lastIcon: 'mdi-arrow-collapse-right',
-        itemsPerPageOptions: [10, 20, 50, 100, -1]
-      }
-      "
-    >
-      <template v-slot:top>
-        <v-text-field
-          v-model="search"
-          label="Search me"
-          class="mx-4"
-        ></v-text-field>
-      </template>
-      <template v-slot:item="{ item }">
-        <tr>
-          <td>
-            {{item['nickname']}}
-          </td>
-          <td>
-            {{item['title']}}
-          </td>
-          <td>
-            {{item['launch_date']}}
-          </td>
-          <td>
-            {{item['end_date']}}
-          </td>
-          <td>
-            <v-container>
-              <v-row>
-                <v-col class="col-6">
-                  <v-icon
-                    small
-                    class="mr-2"
-                    @click="editItem(item)"
-                  >
-                    mdi-pencil
-                  </v-icon>
-                </v-col>
-                <v-col class="col-6">
-                  <v-icon
-                    small
-                    @click="viewDetail(item)"
-                  >
-                    mdi-eye
-                  </v-icon>
-                </v-col>
-              </v-row>
-            </v-container>
-          </td>
-        </tr>
-      </template>
-    </v-data-table>
+    <v-card>
+      <v-card-title>
+        Projects
+      </v-card-title>
+      <v-data-table
+        :headers="headers"
+        :items="projects"
+        :items-per-page="50"
+        class="projects-1"
+        :search="search"
+        :custom-filter="filter"
+        :footer-props="{
+          showFirstLastPage: true,
+          firstIcon: 'mdi-arrow-collapse-left',
+          lastIcon: 'mdi-arrow-collapse-right',
+          itemsPerPageOptions: [10, 20, 50, 100, -1]
+        }
+        "
+      >
+        <template v-slot:top>
+          <v-text-field
+            v-model="search"
+            label="Search"
+            class="mx-4"
+            prepend-inner-icon="mdi-magnify"
+            outlined
+          ></v-text-field>
+        </template>
+        <template v-slot:item="{ item }">
+          <tr>
+            <td>
+              {{item['nickname']}}
+            </td>
+            <td>
+              {{item['title']}}
+            </td>
+            <td>
+                {{ launchDateDisplay(item) }}
+            </td>
+            <td>
+                {{ endDateDisplay(item) }}
+            </td>
+            <td>
+              <v-container>
+                <v-row>
+                  <v-col class="col-6">
+                    <v-icon
+                      small
+                      class="mr-2"
+                      @click="editItem(item)"
+                    >
+                      mdi-pencil
+                    </v-icon>
+                  </v-col>
+                  <v-col class="col-6">
+                    <v-icon
+                      small
+                      @click="viewDetail(item)"
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </td>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-card>
     <v-dialog
       v-model="debugDialog"
       max-width="600px"
@@ -209,28 +217,29 @@
         align: 'center',
         width: '10%'
       }],
-      api_projects_url: 'https://naomi.hxydra.hxtech.org/v1/catalog/project/',
-      projects: [{
-        nickname: 'HIN_v1',
-        title: "Health in Numbers: Quantitative Methods in Clinical & Public Health Research",
-        launch_date: '2012-10-15',
-        end_date: '',
-      }, {
-        nickname: 'CS50x_v1',
-        launch_date: '2012-10-15',
-        title:  'CS50\'s Introduction to Computer Science',
-        end_date: '',
-      }, {
-        nickname: 'Copy_v1',
-        launch_date: '2013-01-18',
-        title:  'Copyright',
-        end_date: '',
-      }, {
-        nickname: 'Anat_v1_02',
-        launch_date: '2023-06-23',
-        title:  'Human Anatomy: Musculoskeletal Cases',
-        end_date: '',
-      }]
+      api_projects_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/project/',
+      projects: [],
+      // projects: [{
+      //   nickname: 'HIN_v1',
+      //   title: "Health in Numbers: Quantitative Methods in Clinical & Public Health Research",
+      //   launch_date: '2012-10-15',
+      //   end_date: '',
+      // }, {
+      //   nickname: 'CS50x_v1',
+      //   launch_date: '2012-10-15',
+      //   title:  'CS50\'s Introduction to Computer Science',
+      //   end_date: '',
+      // }, {
+      //   nickname: 'Copy_v1',
+      //   launch_date: '2013-01-18',
+      //   title:  'Copyright',
+      //   end_date: '',
+      // }, {
+      //   nickname: 'Anat_v1_02',
+      //   launch_date: '2023-06-23',
+      //   title:  'Human Anatomy: Musculoskeletal Cases',
+      //   end_date: '',
+      // }]
     }),
     methods: {
       filter (value, search) {
@@ -297,7 +306,15 @@
       closeEdit () {
         this.editing = false
         this.selected = false
-      }
+      },
+      launchDateDisplay( item ) {
+        let res = 'launch_date' in item ? new Date(item['launch_date']).toISOString().substring(0,10) : 'Unset'
+        return res
+      },
+      endDateDisplay( item ) {
+        let res = 'end_date' in item ? new Date(item['end_date']).toISOString().substring(0,10) : 'Unset'
+        return res
+      },
     },
     mounted() {
       this.getProjects();

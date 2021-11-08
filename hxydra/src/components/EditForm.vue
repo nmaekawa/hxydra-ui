@@ -480,11 +480,15 @@
       }, {
         'proper_name': 'School',
         'tech_name': 'school',
-        'key': 'school'
+        'key': 'name',
+        'par': 'description',
+        'proper_par_name': 'Full School Name'
       }, {
         'proper_name': 'Platform Discipline',
         'tech_name': 'platformdiscipline',
-        'key': 'name'
+        'key': 'name',
+        'par': 'platform',
+        'proper_par_name': 'Platform Name'
       }, {
         'proper_name': 'Project Status',
         'tech_name': 'projectstatus',
@@ -500,8 +504,8 @@
       school: [],
       platformdiscipline: [],
       projectstatus: [],
-      api_url_prefix: 'https://naomi.hxydra.hxtech.org/v1/catalog/',
-      people_api_url: 'https://naomi.hxydra.hxtech.org/v1/catalog/person/',
+      api_url_prefix: 'https://devo2.hxydra.hxtech.org/v1/kondo/',
+      people_api_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/person/',
       // course: {
       //   id: 'auto_id',
       //   created: 'date',
@@ -549,7 +553,7 @@
           console.log("what")
           this.$http.get(this.api_url_prefix +s['tech_name']+'/')
             .then(e => {
-              console.log('woo', e)
+              console.log('woo', e, s['tech_name'], this[s['tech_name']])
               this[s['tech_name']] = e.data.map(f => f[s['key']])
               console.log("wee", this[s['tech_name']])
             })
@@ -580,8 +584,10 @@
         this.$emit('closeEdit', '')
       },
       saveChanges () {
+        console.log('why', this.course)
         this.$http.put(
-            'https://naomi.hxydra.hxtech.org/v1/catalog/project/' + this.course.nickname + '/',
+            'https://devo2.hxydra.hxtech.org/v1/kondo/project/' + this.course.nickname + '/',
+            this.course
           ).then(data => {
             console.log("Updated", data)
           }).catch(e => {

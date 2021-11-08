@@ -6,7 +6,7 @@
       dark
     >
       <div class="d-flex align-center">
-        <div class="text-h4 font-weight-bold">Projects</div>
+        <v-btn class="text-h4 font-weight-bold text-none" text>Kondo</v-btn>
       </div>
 
       <v-spacer></v-spacer>

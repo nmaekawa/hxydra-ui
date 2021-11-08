@@ -6,7 +6,7 @@
       dark
     >
       <div class="d-flex align-center">
-        <div class="text-h4 font-weight-bold">Configure Lists</div>
+        <v-btn class="text-h4 font-weight-bold text-none" text href="/projects/">Kondo</v-btn><span class="text-h7">Configure Lists</span>
       </div>
 
       <v-spacer></v-spacer>
