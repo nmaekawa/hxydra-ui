@@ -216,6 +216,10 @@
         sortable: false,
         align: 'center',
         width: '10%'
+      }, {
+        text: 'fuzzy date',
+        align: ' d-none',
+        value: 'fuzzy_launch_date'
       }],
       api_projects_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/project/',
       projects: [],
