@@ -267,6 +267,16 @@
       },
       createProject () {
         console.log(this.api_url, this.$refs.createform)
+        let fuzz = this.approx_date.length > 0
+        let approx_val = ''
+        let start_date = undefined
+        let end_date = undefined
+        if (fuzz) {
+          approx_val = this.approx_date
+        } else {
+          start_date = new Date(this.launch_date)
+          end_date = new Date(this.end_date)
+        }
         if (this.validate()) {
           let options = {
             prefix: this.prefix,
@@ -274,12 +284,11 @@
             version: this.version,
             run: this.run,
             sequence: this.sequence_num,
-            launch_date: new Date(this.launch_date),
-            end_date: new Date(this.end_date),
-            // estimated_effort_min: this.hrs_per_week_min,
-            // estimated_effort_max: this.hrs_per_week_max,
+            launch_date: start_date,
+            end_date: end_date,
             nickname: this.nickname,
-            cert_available: this.cert_available
+            is_fuzzy_launch_date: fuzz,
+            fuzzy_launch_date: approx_val
           }
           let self = this
           this.$http.post(

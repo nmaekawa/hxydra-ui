@@ -596,6 +596,12 @@
             this.$emit('closeEdit', '')
           })
         
+      },
+      getDate(d_str) {
+        if (typeof(d_str) == 'undefined') {
+          return ''
+        }
+        return new Date(d_str).toISOString().substring(0,10)
       }
     },
     mounted() {
@@ -604,19 +610,19 @@
     },
     computed: {
       launchDateDisplay() {
-        return this.course.launch_date
+        return this.getDate(this.course.launch_date)
       },
       endDateDisplay() {
-        return this.course.end_date
+        return this.getDate(this.course.end_date)
       },
       publishedDateDisplay() {
-        return this.course.publishedDate
+        return this.getDate(this.course.publishedDate)
       },
       IDVCutOffDateDisplay() {
-        return this.course.IDVCutOffDate
+        return this.getDate(this.course.IDVCutOffDate)
       },
       enrollmentCutOffDateDisplay() {
-        return this.course.enrollmentCutOffDate
+        return this.getDate(this.course.enrollmentCutOffDate)
       }
     }
   }

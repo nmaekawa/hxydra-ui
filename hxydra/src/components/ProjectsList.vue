@@ -308,11 +308,25 @@
         this.selected = false
       },
       launchDateDisplay( item ) {
-        let res = 'launch_date' in item ? new Date(item['launch_date']).toISOString().substring(0,10) : 'Unset'
+        let res = item['fuzzy_launch_date']
+        if ('launch_date' in item) {
+          let d = item['launch_date']
+          if (d) {
+            res = new Date(item['launch_date']).toISOString().substring(0,10)
+          }
+        } else if (!item['is_fuzzy_launch_date']) {
+          res = 'Unset'
+        }
         return res
       },
       endDateDisplay( item ) {
-        let res = 'end_date' in item ? new Date(item['end_date']).toISOString().substring(0,10) : 'Unset'
+        let res = ''
+        if ('end_date' in item) {
+          let d = item['end_date']
+          if (d) {
+            res = new Date(item['end_date']).toISOString().substring(0,10)
+          }
+        }
         return res
       },
     },
