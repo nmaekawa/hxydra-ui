@@ -199,7 +199,7 @@
       },{
         text: 'Project Title',
         sortable: true,
-        value: 'projectTitle',
+        value: 'title',
         width: '55%'
       },{
         text: 'Launch Date',
@@ -243,10 +243,13 @@
     }),
     methods: {
       filter (value, search) {
-        return value != null &&
-          search != null &&
-          typeof value === 'string' &&
-          value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
+        if (value && search) {
+          if (typeof(value) !== "undefined") {
+            console.log(value)
+            return value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) > -1
+          }
+        }
+        return false
       },
       async getProjects () {
         const self = this
