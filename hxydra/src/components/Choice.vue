@@ -271,6 +271,10 @@
         'par': 'platform',
         'proper_par_name': 'Platform Name'
       }, {
+        'proper_name': 'HX Discipline',
+        'tech_name': 'hxdiscipline',
+        'key': 'name'
+      }, {
         'proper_name': 'Project Status',
         'tech_name': 'projectstatus',
         'key': 'name'
