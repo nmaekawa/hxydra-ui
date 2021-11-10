@@ -23,6 +23,7 @@
       v-model="editing"
       width="80%"
       style="background: white"
+      persistent
     >
       <v-card>
         <EditForm :course="selected" @closeEdit="closeEdit"/>
@@ -310,9 +311,12 @@
             console.log(e)
           })
       },
-      closeEdit () {
+      closeEdit (e) {
         this.editing = false
-        this.selected = false
+        if (e) {
+          let indexFound = this.projects.findIndex(obj => obj.nickname === e.nickname)
+          this.$set(this.projects, indexFound, e)
+        }
       },
       launchDateDisplay( item ) {
         let res = item['fuzzy_launch_date']

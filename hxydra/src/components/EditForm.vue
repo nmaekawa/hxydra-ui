@@ -1,5 +1,23 @@
 <template>
   <v-container id="edit-form">
+    <v-snackbar
+      v-model="errorBox"
+      data-testid="errorBox"
+      centered
+    >
+      {{ errorMessage }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          dark
+          v-bind="attrs"
+          @click="errorBox = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-form
       ref="editform"
     >
@@ -172,7 +190,7 @@
                 label="Approximate Launch & End Date"
                 v-model="course.fuzzy_launch_date"
                 :disabled="course.launch_date !== null && (course.launch_date.length > 0 || course.end_date.length > 0)"
-
+                clearable
               ></v-text-field>
             </v-col>
           </v-row>
@@ -586,6 +604,8 @@
       course: Object
     },
     data: () => ({
+      errorBox: false,
+      errorMessage: '',
       enrollmentTypes: [],
       revenueSchools: [],
       affiliations: [],
@@ -746,19 +766,44 @@
       },
       closeEdit () {
         console.log("Emitting closeEdit")
-        this.$emit('closeEdit', '')
+        this.$emit('closeEdit', false)
       },
       saveChanges () {
-        console.log('why', this.course)
+        let self = this;
+        let options = JSON.parse(JSON.stringify(this.course))
+        if (options.fuzzy_launch_date && options.fuzzy_launch_date.length > 0) {
+          options.is_fuzzy_launch_date = true
+          options.launch_date = undefined
+          options.end_date = undefined
+        } else {
+          options.is_fuzzy_launch_date = false
+        }
         this.$http.put(
             'https://devo2.hxydra.hxtech.org/v1/kondo/project/' + this.course.nickname + '/',
-            this.course
+            options
           ).then(data => {
             console.log("Updated", data)
+            this.$emit('closeEdit', this.course)
           }).catch(e => {
-            console.log(e)
-          }).finally( () => {
-            this.$emit('closeEdit', '')
+            console.log('uh', e)
+            self.errorBox = true
+              let mess = `(${e.response.status}) ${e.response.statusText}`
+              switch(e.response.status) {
+                case 400:
+                  self.errorMessage = mess + ` - Missing/Invalid Parameter`
+                  break
+                case 409:
+                  self.errorMessage = mess + ` - Nickname already exists`
+                  break
+                case 401:
+                  self.errorMessage = mess + ` - Log in required`
+                  break
+                case 403:
+                  self.errorMessage = mess + ` - Requires Permission`
+                  break
+                default:
+                  self.errorMessage = mess
+              }
           })
         
       },
