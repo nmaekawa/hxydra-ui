@@ -171,7 +171,7 @@
               <v-text-field
                 label="Approximate Launch & End Date"
                 v-model="course.fuzzy_launch_date"
-                :disabled="course.launch_date.length > 0 || course.end_date.length > 0"
+                :disabled="course.launch_date !== null && (course.launch_date.length > 0 || course.end_date.length > 0)"
 
               ></v-text-field>
             </v-col>
