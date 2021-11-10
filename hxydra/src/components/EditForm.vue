@@ -773,12 +773,22 @@
         let options = JSON.parse(JSON.stringify(this.course))
         if (options.fuzzy_launch_date && options.fuzzy_launch_date.length > 0) {
           options.is_fuzzy_launch_date = true
-          options.launch_date = undefined
-          options.end_date = undefined
+          options.launch_date = null
+          options.end_date = null
         } else {
           options.is_fuzzy_launch_date = false
-          options.launch_date = new Date(options.launch_date)
-          options.end_date = new Date(options.end_date)
+          if (options.launch_date) {
+            options.launch_date = new Date(options.launch_date)
+          } else {
+            options.launch_date = null
+          }
+
+          if (options.end_date) {
+            options.end_date = new Date(options.end_date)
+          } else {
+            options.end_date = null
+          }
+          
         }
         this.$http.put(
             'https://devo2.hxydra.hxtech.org/v1/kondo/project/' + this.course.nickname + '/',
