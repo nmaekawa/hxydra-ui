@@ -470,7 +470,7 @@
               :items="filteredPlatformDiscipline"
               label="Platform Disciplines"
               v-model="course.platform_discipline"
-              no-data-text="Select Delivery Platform First"
+              no-data-text="No Disciplines for chosen Delivery Platform"
               multiple
             ></v-select>
           </v-col>
