@@ -733,10 +733,10 @@
       async getPeople () {
         //eventually this should call a new API call that gets the full list of people
         const { data } = await this.$http.get(
-          process.env.BASE_URL + 'people.json'
+          this.people_api_url
         );
         this.people = data.map(p => (p.first_name + ' ' + p.last_name))
-        console.log(this.people)
+        console.log("PEOPLE", this.people)
       },
       filter (value, search) {
         return value != null &&
