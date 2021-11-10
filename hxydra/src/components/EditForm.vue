@@ -777,6 +777,8 @@
           options.end_date = undefined
         } else {
           options.is_fuzzy_launch_date = false
+          options.launch_date = new Date(options.launch_date)
+          options.end_date = new Date(options.end_date)
         }
         this.$http.put(
             'https://devo2.hxydra.hxtech.org/v1/kondo/project/' + this.course.nickname + '/',
