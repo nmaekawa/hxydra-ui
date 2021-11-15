@@ -584,11 +584,14 @@
         </v-row>
       </v-container>
     </v-form>
+    <v-row>
+      <v-col class="col-6 d-flex justify-center">
     <v-btn
       color="primary"
       @click="saveChanges"
-    >Create</v-btn>
-    <v-btn @click="closeEdit">Cancel</v-btn>
+    >Update</v-btn></v-col>
+    <v-col class="col-6 d-flex justify-center"><v-btn @click="closeEdit">Cancel</v-btn></v-col>
+    </v-row>
   </v-container>
 </template>
 <style>
