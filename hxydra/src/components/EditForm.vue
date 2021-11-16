@@ -27,6 +27,7 @@
             <v-text-field
               v-model="course.title"
               label="Project Name"
+              :rules="titleLength"
               required
             ></v-text-field>
           </v-col>
@@ -36,6 +37,7 @@
             <v-text-field
               v-model="course.common_name"
               label="Common Project Name"
+              :rules="commonNameLength"
               required
             ></v-text-field>
           </v-col>
@@ -51,7 +53,6 @@
               :items="projectstatus"
               label="Status"
               v-model="course.status"
-              multiple
             ></v-select>
           </v-col>
         </v-row>
@@ -211,6 +212,8 @@
                       prepend-icon="mdi-calendar-month"
                       :value="sowDateDisplay"
                       v-on="on"
+                      clearable
+                      @click:clear="course.sow_approval_date = ''"
                     >
                     </v-text-field>
                   </template>
@@ -238,6 +241,8 @@
                       prepend-icon="mdi-calendar-month"
                       :value="facDateDisplay"
                       v-on="on"
+                      clearable
+                      @click:clear="course.faculty_agreement_date = ''"
                     >
                     </v-text-field>
                   </template>
@@ -265,6 +270,8 @@
                       prepend-icon="mdi-calendar-month"
                       :value="advertiseDateDisplay"
                       v-on="on"
+                      clearable
+                      @click:clear="course.advertise_date = ''"
                     >
                     </v-text-field>
                   </template>
@@ -291,10 +298,12 @@
                 >
                   <template v-slot:activator="{ on }">
                     <v-text-field
-                      label="Enrollment Cutoff Date"
+                      label="Course Enrollment Date"
                       prepend-icon="mdi-calendar-month"
                       :value="enrollmentCutOffDateDisplay"
                       v-on="on"
+                      clearable
+                      @click:clear="course.enrollment_date = ''"
                     >
                     </v-text-field>
                   </template>
@@ -319,10 +328,12 @@
                 >
                   <template v-slot:activator="{ on }">
                     <v-text-field
-                      label="IDV Cutoff Date"
+                      label="Cert Enrollment Date"
                       prepend-icon="mdi-calendar-month"
                       :value="IDVCutOffDateDisplay"
                       v-on="on"
+                      clearable
+                      @click:clear="course.cert_enrollment_date = ''"
                     >
                     </v-text-field>
                   </template>
@@ -351,11 +362,13 @@
                       prepend-icon="mdi-calendar-month"
                       :value="marketingDateDisplay"
                       v-on="on"
+                      clearable
+                      @click:clear="course.marketing_live_date = ''"
                     >
                     </v-text-field>
                   </template>
                   <v-date-picker
-                    v-model="course.marketing_date"
+                    v-model="course.marketing_live_date"
                     no-title
                     @change="marketingDatePop = false"
                   >
@@ -412,6 +425,8 @@
               v-model="course.estimated_effort_min"
               label="Estimated hrs per week (Min)"
               type="number"
+              :rules="lessThanMax"
+              oninput="if (this.value < 1) {this.value = 0}"
               required
             ></v-text-field>
           </v-col>
@@ -420,6 +435,8 @@
               v-model="course.estimated_effort_max"
               label="Estimated hrs per week (Max)"
               type="number"
+              :rules="greaterThanMin"
+              oninput="if (this.value < 1) {this.value = 0}"
               required
             ></v-text-field>
           </v-col>
@@ -428,6 +445,8 @@
               v-model="course.duration_weeks"
               label="Course Length"
               type="number"
+              :rules="posIntRules"
+              oninput="if (this.value < 1) {this.value = 0}"
               required
             ></v-text-field>
           </v-col>
@@ -528,10 +547,10 @@
                 >
                   <template v-slot:item="{ item }">
                     <tr>
-                      <td class="col-7">
-                        {{item['name']}}
+                      <td>
+                        {{item['person']['first_name']}} {{item['person']['last_name']}}
                       </td>
-                      <td class="col-3">
+                      <td>
                         <v-autocomplete
                           v-model="item.role"
                           :items="role"
@@ -540,15 +559,19 @@
                         >
                         </v-autocomplete>
                       </td>
-                      <td class="col-2">
+                      <td>
                         <v-container>
                           <v-row>
                             <v-col class="col-12">
-                              <v-icon
-                                small
+                              <v-btn
+                                @click="deletePerson(item)"
                               >
-                                mdi-delete
-                              </v-icon>
+                                <v-icon
+                                  small
+                                >
+                                  mdi-delete
+                                </v-icon>
+                              </v-btn>
                             </v-col>
                           </v-row>
                         </v-container>
@@ -556,25 +579,28 @@
                     </tr>
                   </template>
                   <template v-slot:foot>
-                    <td class="col-7">
+                    <td class="pa-5">
                       <v-autocomplete
                         :items="people"
                         :filter="filter"
                         item-text="name"
                         label="Add Person"
+                        v-model="addPerson"
                       ></v-autocomplete>
                     </td>
-                    <td class="col-3">
+                    <td class="pa-5">
                       <v-autocomplete
                           :items="role"
                           :filter="filter"
                           label="Add role"
+                          v-model="addRole"
                         >
                         </v-autocomplete>
                     </td>
-                    <td class="col-2">
+                    <td class="pa-5 d-flex justify-center">
                       <v-btn
                        color="primary"
+                       @click="addTeam"
                       >Add</v-btn>
                     </td>
                   </template>
@@ -598,6 +624,18 @@
   #edit-form table {
     border: 1px solid black;
   }
+  .v-menu__content::-webkit-scrollbar{
+    -webkit-appearance: none;
+    width:  7px;
+  }
+  .v-menu__content::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+  }
+  .v-menu__content {
+    background: white;
+  }
 </style>
 
 <script>
@@ -609,6 +647,8 @@
     data: () => ({
       errorBox: false,
       errorMessage: '',
+      addPerson: '',
+      addRole: '',
       enrollmentTypes: [],
       revenueSchools: [],
       affiliations: [],
@@ -626,17 +666,21 @@
       teamHeaders: [{
         text: 'Name',
         sortable: true,
-        value: 'name'
+        value: 'name',
+        width: '60%'
       }, {
         text: 'Role on Team',
         sortable: true,
-        value: 'role'
+        value: 'role',
+        width: '30%'
       }, {
         text: 'Actions',
-        sortable: false
+        sortable: false,
+        width: '10%'
       }],
       searchTeam: '',
       people: [],
+      full_people: [],
       setup_options: [{
         'proper_name': 'Enrollment Type',
         'tech_name': 'enrollmenttype',
@@ -734,7 +778,7 @@
                 this[s['tech_name']] = e.data.map(function(f) {
                   return {
                     'par': f[s['par']],
-                    'text': f[s['key']] + ' (' + f[s['par']] + ')'
+                    'text': f[s['key']]
                   }
                 })
               } else {
@@ -759,6 +803,7 @@
           this.people_api_url
         );
         this.people = data.map(p => (p.first_name + ' ' + p.last_name))
+        this.full_people = data
         console.log("PEOPLE", this.people)
       },
       filter (value, search) {
@@ -780,19 +825,20 @@
           options.end_date = null
         } else {
           options.is_fuzzy_launch_date = false
-          if (options.launch_date) {
-            options.launch_date = new Date(options.launch_date)
-          } else {
-            options.launch_date = null
-          }
-
-          if (options.end_date) {
-            options.end_date = new Date(options.end_date)
-          } else {
-            options.end_date = null
-          }
-          
+          options.launch_date = self.normalizeDate(options.launch_date)
+          options.end_date = self.normalizeDate(options.end_date)
         }
+
+        options.faculty_agreement_date = self.normalizeDate(options.faculty_agreement_date)
+        options.sow_approval_date = self.normalizeDate(options.sow_approval_date)
+        options.advertise_date = self.normalizeDate(options.advertise_date)
+        options.enrollment_date = self.normalizeDate(options.enrollment_date)
+        options.cert_enrollment_date = self.normalizeDate(options.cert_enrollment_date)
+        options.marketing_live_date = self.normalizeDate(options.marketing_live_date)
+        if (options.subactivity === '') {
+          options.subactivity = null
+        }
+
         this.$http.put(
             'https://devo2.hxydra.hxtech.org/v1/kondo/project/' + this.course.nickname + '/',
             options
@@ -827,6 +873,27 @@
           return ''
         }
         return new Date(d_str).toISOString().substring(0,10)
+      },
+      normalizeDate(dateStr) {
+        if (dateStr && dateStr.length > 0) {
+          return new Date(dateStr)
+        } else {
+          return null
+        }
+      },
+      addTeam() {
+        let personItem = this.full_people.filter(e => (e.first_name + " " + e.last_name) == this.addPerson)[0]
+        this.course.team.push({
+          project: this.course.nickname,
+          person: personItem,
+          role: this.addRole
+        })
+        this.addPerson = ""
+        this.addRole = ""
+      },
+      deletePerson(item) {
+        this.course.team = this.course.team.filter(e => e.pk != item.pk)
+        console.log(item)
       }
     },
     mounted() {
@@ -856,11 +923,42 @@
         return this.getDate(this.course.faculty_agreement_date)
       },
       marketingDateDisplay() {
-        return this.getDate(this.course.marketing_date)
+        return this.getDate(this.course.marketing_live_date)
       },
       filteredPlatformDiscipline() {
-        console.log(this.course.delivery_platform, this.platformdiscipline)
         return this.platformdiscipline.filter(d => d.par == this.course.delivery_platform)
+      },
+      posIntRules () {
+        const rules = []
+        const ruleMin = v => v > -1 || 'Cannot be negative'
+        rules.push(ruleMin)
+        return rules
+      },
+      lessThanMax() {
+        const rules = []
+        const ruleMin = v => v > -1 || 'Cannot be negative'
+        const ruleLtMax = v => v <= this.course.estimated_effort_max || 'Cannot be more than max'
+        rules.push(ruleMin)
+        rules.push(ruleLtMax)
+        return rules
+      },
+      greaterThanMin() {
+        const rules = []
+        const ruleGtMin = v => v >= this.course.estimated_effort_min || 'Cannot be less than min effort'
+        rules.push(ruleGtMin)
+        return rules
+      },
+      titleLength() {
+        const rules = []
+        const maxTitle = v => v.length < 500 || 'Must be max 500 chars'
+        rules.push(maxTitle)
+        return rules
+      },
+      commonNameLength() {
+        const rules = []
+        const maxNameLength = v => v.length < 50 || 'Must be max 50 chars'
+        rules.push(maxNameLength)
+        return rules
       }
     }
   }
