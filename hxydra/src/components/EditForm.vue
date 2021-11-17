@@ -610,14 +610,14 @@
         </v-row>
       </v-container>
     </v-form>
-    <v-row>
+    <v-toolbar dense style="position: sticky; bottom: 0; z-index: 9999;">
       <v-col class="col-6 d-flex justify-center">
     <v-btn
       color="primary"
       @click="saveChanges"
     >Update</v-btn></v-col>
     <v-col class="col-6 d-flex justify-center"><v-btn @click="closeEdit">Cancel</v-btn></v-col>
-    </v-row>
+    </v-toolbar>
   </v-container>
 </template>
 <style>

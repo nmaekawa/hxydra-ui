@@ -35,7 +35,10 @@
       style="background: white"
     >
       <v-card v-if="selected">
-        <v-toolbar dense>
+        <v-toolbar
+          dense
+          style="position: sticky; top: 0; z-index: 99999"
+        >
           <v-btn
             class="ma-2"
             @click="detail = false"
@@ -43,6 +46,12 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-spacer/>
+        <v-btn class="mr-3">
+          New Version
+        </v-btn>
+        <v-btn class="mr-3">
+          New Run
+        </v-btn>
         <v-btn
           @click="deleteItem(rowItem)"
         >
