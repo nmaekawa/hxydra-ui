@@ -5,6 +5,22 @@
         <v-container>
           <v-row>
             <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
+              Project Title:
+            </v-col>
+            <v-col class="col-lg-8 col-md-9 col-sm-10 col-9">
+              {{course.title}}
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
+              Common Name:
+            </v-col>
+            <v-col class="col-lg-8 col-md-9 col-sm-10 col-9">
+              {{course.common_name}}
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
               Nickname:
             </v-col>
             <v-col class="col-lg-3 col-md-9 col-sm-4 col-9">
@@ -14,7 +30,7 @@
               Course Run:
             </v-col>
             <v-col class="col-lg-3 col-md-9 col-sm-4 col-9">
-              {{course.courseRun}}
+              {{course.program_run}}
             </v-col>
           </v-row>
           <v-row>
@@ -22,31 +38,16 @@
               Course Number:
             </v-col>
             <v-col class="col-lg-3 col-md-9 col-sm-4 col-9">
-              {{course.courseNumber}}
+              {{course.program_code}}
             </v-col>
             <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
               Course ID:
             </v-col>
             <v-col class="col-lg-3 col-md-9 col-sm-4 col-9">
-              {{course.courseId}}
+              {{course.program_id}}
             </v-col>
           </v-row>
-          <v-row>
-            <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
-              Project Title:
-            </v-col>
-            <v-col class="col-lg-8 col-md-9 col-sm-10 col-9">
-              {{course.projectTitle}}
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
-              Common Name:
-            </v-col>
-            <v-col class="col-lg-8 col-md-9 col-sm-10 col-9">
-              {{course.commonProjectName}}
-            </v-col>
-          </v-row>
+          
           <v-row>
             <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
               Status
@@ -61,46 +62,82 @@
         <v-container>
           <v-row>
             <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
-              Launch Date:
-            </v-col>
-            <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
-              {{course.launchDate}}
-            </v-col>
-            <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
               Subactivity:
             </v-col>
             <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
               {{course.subactivity}}
             </v-col>
+            <v-col v-if="!course.is_fuzzy_launch_date" class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
+              Launch Date:
+            </v-col>
+            <v-col v-if="!course.is_fuzzy_launch_date" class="col-lg-3 col-md-8 col-sm-4 col-9">
+              {{ getDate(course.launch_date) }}
+            </v-col>
           </v-row>
           <v-row>
-            <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
+            <v-col v-if="!course.is_fuzzy_launch_date" class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
               End Date:
             </v-col>
-            <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
-              {{course.endDate}}
+            <v-col v-if="!course.is_fuzzy_launch_date" class="col-lg-3 col-md-8 col-sm-4 col-9">
+              {{ getDate(course.end_date) }}
             </v-col>
-            <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
-              Published Date:
+            <v-col v-if="course.is_fuzzy_launch_date" class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
+              Approx Launch Date:
+            </v-col>
+            <v-col v-if="course.is_fuzzy_launch_date" class="col-lg-3 col-md-8 col-sm-4 col-9">
+              {{course.fuzzy_launch_date}}
+            </v-col>
+            <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
+              SOW Approval Date:
             </v-col>
             <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
-              {{course.publishedDate}}
+              {{ getDate(course.sow_approval_date) }}
+            </v-col>
+            <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
+              Faculty Agreement Date:
+            </v-col>
+            <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
+              {{ getDate(course.faculty_agreement_date) }}
+            </v-col>
+            <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
+              Advertise Date:
+            </v-col>
+            <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
+              {{ getDate(course.advertise_date) }}
+            </v-col>
+            <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
+              Marketing Date:
+            </v-col>
+            <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
+              {{ getDate(course.marketing_live_date) }}
+            </v-col>
+            <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
+              Course Enrollment Date:
+            </v-col>
+            <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
+              {{ getDate(course.enrollment_date) }}
+            </v-col>
+            <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
+              Cert Enrollment Date:
+            </v-col>
+            <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
+              {{ getDate(course.cert_enrollment_date) }}
             </v-col>
           </v-row>
           <v-row>
             <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
-              About Page URL:
+              Enrollment Page URL:
             </v-col>
             <v-col class="col-lg-8 col-md-8 col-sm-10 col-9">
-              <a :href="course.aboutPageUrl">{{course.aboutPageUrl}}</a>
+              <a :href="course.enrollment_page_url">{{course.enrollment_page_url}}</a>
             </v-col>
           </v-row>
           <v-row>
             <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
-              Public Course URL:
+              Public URL:
             </v-col>
             <v-col class="col-lg-8 col-md-8 col-sm-10 col-9">
-              <a :href="course.publicCourseUrl">{{course.publicCourseUrl}}</a>
+              <a :href="course.public_url">{{course.public_url}}</a>
             </v-col>
           </v-row>
         </v-container>
@@ -128,11 +165,6 @@
                   Team
                 </v-tab>
                 <v-tab
-                  key="affiliation"
-                >
-                  Affiliation
-                </v-tab>
-                <v-tab
                   key="dissub"
                 >
                   Discipline/edX Subject
@@ -150,7 +182,7 @@
                     <v-col class="col-lg-4 col-md-4 col-sm-12 col-12">
                       <v-container>
                         <v-row>
-                          <v-col v-if="course.IDVCertAvailable" class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
+                          <v-col v-if="course.cert_available" class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
                             <v-icon color="green">mdi-check-circle</v-icon>
                           </v-col>
                           <v-col v-else class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
@@ -161,7 +193,7 @@
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col v-if="course.selfPaced" class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
+                          <v-col v-if="course.self_paced" class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
                             <v-icon color="green">mdi-check-circle</v-icon>
                           </v-col>
                           <v-col v-else class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
@@ -172,7 +204,7 @@
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col v-if="course.facultyAgreementsSigned" class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
+                          <v-col v-if="course.faculty_agreement_date" class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
                             <v-icon color="green">mdi-check-circle</v-icon>
                           </v-col>
                           <v-col v-else class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
@@ -187,22 +219,22 @@
                     <v-col class="col-lg-4 col-md-4 col-sm-12 col-12">
                       <v-container>
                         <v-row>
-                          <v-col class="col-6">
+                          <v-col class="col-6 text-caption">
                             Enrollment Type: 
                           </v-col>
-                          <v-col class="col-6" v-if="course.enrollmentType !== ''">
-                            {{course.enrollmentType}}
+                          <v-col class="col-6" v-if="course.enrollment_type !== ''">
+                            {{course.enrollment_type}}
                           </v-col>
                           <v-col v-else class="col-6">
                             N/A
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col class="col-6">
+                          <v-col class="col-6 text-caption">
                             Est. Effort (Min - Max): 
                           </v-col>
                           <v-col class="col-6">
-                            {{course.effortMin}} - {{course.effortMax}} hrs
+                            {{course.estimated_effort_min}} - {{course.estimated_effort_max}} hrs
                           </v-col>
                         </v-row>
                         <v-row>
@@ -210,15 +242,15 @@
                             Course Length: 
                           </v-col>
                           <v-col class="col-6">
-                            {{course.courseLength}} weeks
+                            {{course.duration_weeks}} weeks
                           </v-col>
                         </v-row>
                         <v-row>
                           <v-col class="col-6">
                             Pass Rate to Certify: 
                           </v-col>
-                          <v-col v-if="course.passRate !== ''" class="col-6">
-                            {{course.passRate}}
+                          <v-col v-if="course.cert_rate_to_certify !== ''" class="col-6">
+                            {{course.cert_rate_to_certify}}
                           </v-col>
                           <v-col v-else class="col-6">
                             N/A
@@ -226,32 +258,10 @@
                         </v-row>
                         <v-row>
                           <v-col class="col-6">
-                            Enrollment Cutoff Date: 
+                            Cert Price: 
                           </v-col>
-                          <v-col v-if="course.IDVCutOffDate !== ''" class="col-6">
-                            {{course.IDVCutOffDate}}
-                          </v-col>
-                          <v-col v-else class="col-6">
-                            N/A
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col class="col-6">
-                            IDV Price: 
-                          </v-col>
-                          <v-col v-if="course.IDVPrice !== -1" class="col-6">
-                            {{course.IDVPrice}}
-                          </v-col>
-                          <v-col v-else class="col-6">
-                            N/A
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col class="col-6">
-                            IDV Cutoff Date: 
-                          </v-col>
-                          <v-col v-if="course.IDVCutOffDate !== ''" class="col-6">
-                            {{course.IDVCutOffDate}}
+                          <v-col v-if="course.cert_price !== -1" class="col-6">
+                            {{course.cert_price}}
                           </v-col>
                           <v-col v-else class="col-6">
                             N/A
@@ -265,8 +275,8 @@
                           <v-col class="col-6">
                             Delivery Platform: 
                           </v-col>
-                          <v-col v-if="course.deliveryPlatform !== ''" class="col-6">
-                            {{course.deliveryPlatform}}
+                          <v-col v-if="course.delivery_platform !== ''" class="col-6">
+                            {{course.delivery_platform}}
                           </v-col>
                           <v-col v-else class="col-8">
                             N/A
@@ -276,8 +286,8 @@
                           <v-col class="col-6">
                             Technical Platform: 
                           </v-col>
-                          <v-col v-if="course.technicalPlatform !== ''" class="col-6">
-                            {{course.technicalPlatform}}
+                          <v-col v-if="course.technical_platform !== ''" class="col-6">
+                            {{course.technical_platform}}
                           </v-col>
                           <v-col v-else>
                             N/A
@@ -285,10 +295,21 @@
                         </v-row>
                         <v-row>
                           <v-col class="col-6">
-                            Revenue School: 
+                            Revenue School(s): 
                           </v-col>
-                          <v-col v-if="course.revenueSchool !== ''" class="col-6">
-                            {{course.revenueSchool}}
+                          <v-col v-if="course.revenue_school.length > 0" class="col-6">
+                            {{course.revenue_school.join(', ')}}
+                          </v-col>
+                          <v-col v-else>
+                            N/A
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col class="col-6">
+                            Sponsoring School(s): 
+                          </v-col>
+                          <v-col v-if="course.sponsoring_school.length > 0" class="col-6">
+                            {{course.sponsoring_school.join(', ')}}
                           </v-col>
                           <v-col v-else>
                             N/A
@@ -307,7 +328,7 @@
                 <v-data-table
                   :headers="teamHeaders"
                   :search="searchTeam"
-                  :items="course.teamMembers"
+                  :items="course.team"
                   :items-per-page="10"
                   :footer-props="{
                     showFirstLastPage: false,
@@ -322,19 +343,17 @@
                       class="mx-4"
                     ></v-text-field>
                   </template>
+                  <template v-slot:item="{ item }">
+                    <tr>
+                      <td>
+                        {{item['person']['first_name']}} {{item['person']['last_name']}}
+                      </td>
+                      <td>
+                        {{item.role}}
+                      </td>
+                    </tr>
+                  </template>
                 </v-data-table>
-              </v-card>
-            </v-tab-item>
-            <v-tab-item
-              key="affiliation"
-            >
-              <v-card flat>
-                <v-card-text>
-                  Schools:
-                  <v-chip v-for="c in course.affiliation" v-bind:key="c">
-                    {{ c }}
-                  </v-chip>
-                </v-card-text>
               </v-card>
             </v-tab-item>
             <v-tab-item
@@ -342,14 +361,14 @@
             >
               <v-card flat>
                 <v-card-text>
-                  Disciplines:
-                  <v-chip v-for="d in course.discipline" v-bind:key="d">
+                  Platform Discipline:
+                  <v-chip v-for="d in course.platform_discipline" v-bind:key="d">
                     {{ d }}
                   </v-chip>
                 </v-card-text>
                 <v-card-text>
-                  edX Subjects:
-                  <v-chip v-for="e in course.edXSubject" v-bind:key="e">
+                  HX Disciplines (Marketing):
+                  <v-chip v-for="e in course.hx_discipline" v-bind:key="e">
                     {{ e }}
                   </v-chip>
                 </v-card-text>
@@ -369,23 +388,17 @@
       course: Object
     },
     data: () => ({
-      enrollmentTypes: [],
       searchTeam: '',
-      tPlatforms: [],
-      dPlatforms: [],
-      revenueSchools: [],
-      affiliations: [],
-      disciplines: [],
-      edXSubjects: [],
-      statuses: [],
       teamHeaders: [{
         text: 'Name',
         sortable: true,
-        value: 'name'
+        value: 'name',
+        width: '70%'
       }, {
         text: 'Role on Team',
         sortable: true,
-        value: 'role'
+        value: 'role',
+        width: '30%'
       }],
       tab: undefined,
       // course: {
@@ -435,15 +448,11 @@
           typeof value === 'string' &&
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
       },
-      getChoices () {
-        this.enrollmentTypes = ['', 'Open', 'Limited', 'Other', 'Audit']
-        this.tPlatforms = ['edX', 'edX White Label', 'Canvas', 'HBSO', 'Other']
-        this.dPlatforms = ['edX', 'edge.edX', 'HXPLUS', 'i-book', 'e-book', 'Other', 'GetSmarter', 'HBSO']
-        this.revenueSchools = ['HSPH']
-        this.affiliations = ['Harvard Business School', 'Harvard School of Public Health']
-        this.disciplines = ['Architecture', 'Health Sciences']
-        this.edXSubjects = []
-        this.statuses = ['Active', 'Archive', 'Closed', 'Cancelled', 'Paused', 'Seedling', 'LOI', 'Proposal', 'In Development', 'Maintenance']
+      getDate(d_str) {
+        if (typeof(d_str) == 'undefined' || d_str === '' || d_str === null) {
+          return ''
+        }
+        return new Date(d_str).toISOString().substring(0,10)
       },
       getVersionNum (nickname) {
         const regEx = /_v([0-9]+)/g
@@ -451,8 +460,5 @@
         return arr[0][1];
       }
     },
-    mounted() {
-      this.getChoices()
-    }
   }
 </script>
