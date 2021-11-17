@@ -393,13 +393,14 @@
         this.people = this.people.filter(e => e.id !== person.id)
       },
       async deleteChoice() {
+        let self = this
         await this.$http.delete(
-          this.api_url_prefix + this.choiceSelected + '/' + this.awaitingDelete.toLowerCase().replace(' ', '-') + '/'
+          this.api_url_prefix + this.choiceSelected + '/' + self.awaitingDelete.value.toLowerCase().replace(' ', '-') + '/'
         )
           .then(e => {
             console.log('Worked', e)
             let cat = this.values[this.choiceSelected]
-            cat = cat.filter(e => e !== this.awaitingDelete)
+            cat = cat.filter(e => e.value !== this.awaitingDelete.value)
             this[this.choiceSelected] = cat
             this.values[this.choiceSelected] = cat
             this.choiceSelected = ''
