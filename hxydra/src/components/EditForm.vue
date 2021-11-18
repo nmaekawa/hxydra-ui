@@ -464,6 +464,7 @@
               :items="deliveryplatform"
               label="Delivery Platform"
               v-model="course.delivery_platform"
+              @input="changeDeliveryPlatform"
             ></v-select>
           </v-col>
           <v-col class="col-4">
@@ -880,6 +881,11 @@
         } else {
           return null
         }
+      },
+      changeDeliveryPlatform () {
+        let current_disciplines = this.platformdiscipline.filter(d => this.course.platform_discipline.indexOf(d.text) > -1)
+        current_disciplines = current_disciplines.filter(d => d.par == this.course.delivery_platform)
+        this.course.platform_discipline = current_disciplines.map(e => e.text)
       },
       addTeam() {
         let personItem = this.full_people.filter(e => (e.first_name + " " + e.last_name) == this.addPerson)[0]
