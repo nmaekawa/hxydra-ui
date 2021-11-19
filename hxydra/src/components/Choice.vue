@@ -9,7 +9,8 @@
           <v-list-item v-for="e in values[item.tech_name]" v-bind:key="e.value">
             <v-list-item-content>
               <v-list-item-title>
-                <v-btn title="Edit" @click="choiceSelected = item.tech_name" class="" icon small>
+                <v-btn title="Edit" @click="
+                awaitingEdit = e; choiceSelected = item.tech_name; editChoice()" class="" icon small>
                     <v-icon>mdi-pencil</v-icon>
                 </v-btn>
                 <v-btn title="Delete" @click="awaitingDelete = e; choiceSelected = item.tech_name; deleteChoice()" class="mr-5" icon small>
@@ -99,15 +100,16 @@
         <v-container>
           <v-text-field
             v-model="newChoice"
-            :label="'Add New ' + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_name : 'Choice')"
+            :label="(isEditingChoice ? 'Update ' : 'Add New ') + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_name : 'Choice')"
           ></v-text-field>
           <v-text-field
             v-if="(choiceSelected ? 'par' in setup_options.filter(e => e.tech_name == choiceSelected)[0] : false)"
             v-model="newPar"
-            :label="'Add New ' + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_par_name : 'Description')"
+            :label="(isEditingChoice ? 'Update ' : 'Add New ')  + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_par_name : 'Description')"
           ></v-text-field>
-          <v-btn color="#483682" dark class="mr-5" @click="addChoicePopup()">Add</v-btn>
-          <v-btn @click="add = false">Cancel</v-btn>
+          <v-btn v-if="!isEditingChoice" color="#483682" dark class="mr-5" @click="addChoicePopup()">Add</v-btn>
+          <v-btn v-if="isEditingChoice" color="#483682" dark class="mr-5" @click="updateChoicePopup()">Update</v-btn>
+          <v-btn @click="add = false; isEditingChoice = false">Cancel</v-btn>
         </v-container>
       </v-card>
     </v-dialog>
@@ -211,6 +213,7 @@
       }],
       search: '',
       idRef: '',
+      isEditingChoice: false,
       enrollmenttype: [],
       technicalplatform: [],
       newChoice: undefined,
@@ -222,6 +225,7 @@
       projectstatus: [],
       choiceSelected: undefined,
       awaitingDelete: undefined,
+      awaitingEdit: undefined,
       people: [],
       headers: [{
         text: 'First Name',
@@ -407,6 +411,55 @@
             this.awaitingDelete = ''
           })
           .catch(e => console.log('Error', e))
+      },
+      async editChoice() {
+        this.add = true
+        this.isEditingChoice = true
+        let choice = this.setup_options.filter( e => e.tech_name == this.choiceSelected)[0]
+        console.log(choice)
+        if ('par' in choice) {
+          this.newPar = this.awaitingEdit.par
+        }
+        this.newChoice = this.awaitingEdit.value
+      },
+      async updateChoicePopup() {
+        let options = {}
+        let hasPar = false
+        let choice = this.setup_options.filter( e => e.tech_name == this.choiceSelected)[0]
+        options[choice.key] = this.newChoice
+        if ('par' in choice) {
+          options[choice.par] = this.newPar
+          hasPar = true
+        }
+        let self = this
+        this.$http.put(
+          this.api_url_prefix + this.choiceSelected+'/'+this.awaitingEdit.value+'/',
+          options
+        )
+          .then(data => {
+            let chosen = this.values[this.choiceSelected]
+            let newChoices = chosen.map(function(e) {
+
+              if(e.value == self.awaitingEdit.value) {
+                let possChoice = {
+                  'value': self.newChoice
+                }
+                if(hasPar) {
+                  possChoice['par'] = self.newPar
+                }
+                return possChoice
+              }
+              return e
+            })
+            this.values[this.choiceSelected] = newChoices
+            this.add = false
+            this.isEditingChoice = false
+            this.newChoice = ''
+            this.newPar = ''
+            this.choiceSelected = ''
+            console.log(data)
+          })
+          .catch(e => console.log(e))
       },
       async getListFromAPI () {
         // return await this.$http.get(

@@ -140,6 +140,7 @@
                       label="Launch Date"
                       prepend-icon="mdi-calendar-month"
                       :value="launchDateDisplay"
+                      :rules="dateAfterRule"
                       v-on="on"
                       clearable
                       @click:clear="course.launch_date = ''"
@@ -171,6 +172,7 @@
                       prepend-icon="mdi-calendar-month"
                       :value="endDateDisplay"
                       v-on="on"
+                      :rules="dateBeforeRule"
                       clearable
                       @click:clear="course.end_date = ''"
                       :disabled="course.fuzzy_launch_date !== null && course.fuzzy_launch_date.length > 0"
@@ -257,6 +259,38 @@
             <v-col class="mx-a col-4">
               <v-layout row wrap>
                 <v-menu
+                  v-model="marketingDatePop"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                  max-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      label="Marketing Launch Date"
+                      prepend-icon="mdi-calendar-month"
+                      :value="marketingDateDisplay"
+                      v-on="on"
+                      clearable
+                      @click:clear="course.marketing_live_date = ''"
+                    >
+                    </v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="course.marketing_live_date"
+                    no-title
+                    @change="marketingDatePop = false"
+                  >
+                  </v-date-picker>
+                </v-menu>
+              </v-layout>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col class="mx-a col-4">
+              <v-layout row wrap>
+                <v-menu
                   v-model="advertiseDatePop"
                   :close-on-content-click="false"
                   transition="scale-transition"
@@ -266,7 +300,7 @@
                 >
                   <template v-slot:activator="{ on }">
                     <v-text-field
-                      label="Advertise Date"
+                      label="Application Close Date"
                       prepend-icon="mdi-calendar-month"
                       :value="advertiseDateDisplay"
                       v-on="on"
@@ -284,8 +318,6 @@
                 </v-menu>
               </v-layout>
             </v-col>
-          </v-row>
-          <v-row>
             <v-col class="mx-a col-4">
               <v-layout row wrap>
                 <v-menu
@@ -298,7 +330,7 @@
                 >
                   <template v-slot:activator="{ on }">
                     <v-text-field
-                      label="Course Enrollment Date"
+                      label="Enrollment Close Date"
                       prepend-icon="mdi-calendar-month"
                       :value="enrollmentCutOffDateDisplay"
                       v-on="on"
@@ -341,36 +373,6 @@
                     v-model="course.cert_enrollment_date"
                     no-title
                     @change="IDVCutOffDatePop = false"
-                  >
-                  </v-date-picker>
-                </v-menu>
-              </v-layout>
-            </v-col>
-            <v-col class="mx-a col-4">
-              <v-layout row wrap>
-                <v-menu
-                  v-model="marketingDatePop"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                  max-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      label="Marketing Date"
-                      prepend-icon="mdi-calendar-month"
-                      :value="marketingDateDisplay"
-                      v-on="on"
-                      clearable
-                      @click:clear="course.marketing_live_date = ''"
-                    >
-                    </v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="course.marketing_live_date"
-                    no-title
-                    @change="marketingDatePop = false"
                   >
                   </v-date-picker>
                 </v-menu>
@@ -427,6 +429,7 @@
               type="number"
               :rules="lessThanMax"
               oninput="if (this.value < 1) {this.value = 0}"
+              v-on:input="triggerEstimatedEffortValidation"
               required
             ></v-text-field>
           </v-col>
@@ -443,7 +446,7 @@
           <v-col class="col-4">
             <v-text-field
               v-model="course.duration_weeks"
-              label="Course Length"
+              label="Course Length (in weeks)"
               type="number"
               :rules="posIntRules"
               oninput="if (this.value < 1) {this.value = 0}"
@@ -728,45 +731,6 @@
       projectstatus: [],
       api_url_prefix: 'https://devo2.hxydra.hxtech.org/v1/kondo/',
       people_api_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/person/',
-      // course: {
-      //   id: 'auto_id',
-      //   created: 'date',
-      //   created_by: 'string',
-      //   modified: 'date',
-      //   modified_by: 'string',
-      //   project_title: 'Example Title',
-      //   course_id: 'string',
-      //   course_run: '',
-      //   nickname: 'string',
-      //   description: 'Example description of the project',
-      //   //description_brief: 'string',
-      //   type: 'string',
-      //   //section_count: 'number',
-      //   hrs_per_week: 1,
-      //   launch_date: '2021-12-01',
-      //   end_date: '2022-12-01',
-      //   has_cert_honor_code: true,
-      //   is_public: 'boolean',
-      //   is_active: 'boolean',
-      //   //v_discussion: '?',
-      //   //pass_rate_to_certify: 'number',
-      //   //count_asset_encumbrance
-      //   //count_asset_encumbrance_approved
-      //   //count_asset_encumbrance_denied
-      //   //count_asset_encumbrance_has_use_rationale
-      //   //count_asset_encumbrance_has_use_rationale_not_assessed
-      //   //count_asset_encumbrance_needs_info
-      //   //count_asset_encumbrance_ready_to_approve
-      //   //count_assets
-      //   //count_calendar
-      //   //count_deliverables_expected
-      //   //count_deliverables_under_construction
-      //   url: 'string',
-      //   rerun: 'string',
-      //   version: 1,
-      //   revenue_school: 'string',
-      //   types: [],
-      // }
     }),
     methods: {
       getChoices () {
@@ -900,6 +864,12 @@
       deletePerson(item) {
         this.course.team = this.course.team.filter(e => e.pk != item.pk)
         console.log(item)
+      },
+      triggerEstimatedEffortValidation() {
+        this.$refs.editform.validate()
+      },
+      triggerDateValidation() {
+        console.log(this.$refs.editform.validate())
       }
     },
     mounted() {
@@ -908,9 +878,15 @@
     },
     computed: {
       launchDateDisplay() {
+        if (this.$refs.editform) {
+          this.$refs.editform.validate()
+        }
         return this.getDate(this.course.launch_date)
       },
       endDateDisplay() {
+        if (this.$refs.editform) {
+          this.$refs.editform.validate()
+        }
         return this.getDate(this.course.end_date)
       },
       advertiseDateDisplay() {
@@ -934,9 +910,25 @@
       filteredPlatformDiscipline() {
         return this.platformdiscipline.filter(d => d.par == this.course.delivery_platform)
       },
+      dateAfterRule () {
+        const rules = []
+        const ruleAddEnd = v => !v || (v && (this.course.end_date !== null) && (this.course.end_date !== undefined) && (this.course.end_date !== '')) || 'Must add end date'
+        const ruleAft = v => !v || v <= this.getDate(this.course.end_date) || 'Date should not be after End Date'
+        rules.push(ruleAddEnd)
+        rules.push(ruleAft)
+        return rules
+      },
+      dateBeforeRule () {
+        const rules = []
+        const ruleAddLaunch = v => !v || (v && (this.course.launch_date !== null) && (this.course.launch_date !== undefined) && (this.course.launch_date !== '')) || 'Must add launch date'
+        const ruleBef = v => !v || v >= this.getDate(this.course.launch_date) || 'Date should not be before Launch Date'
+        rules.push(ruleAddLaunch)
+        rules.push(ruleBef)
+        return rules
+      },
       posIntRules () {
         const rules = []
-        const ruleMin = v => v > -1 || 'Cannot be negative'
+        const ruleMin = v => v > 0 || 'Cannot be zero or negative'
         rules.push(ruleMin)
         return rules
       },
@@ -962,7 +954,7 @@
       },
       commonNameLength() {
         const rules = []
-        const maxNameLength = v => v.length < 50 || 'Must be max 50 chars'
+        const maxNameLength = v => !v || v.length < 50 || 'Must be max 50 chars'
         rules.push(maxNameLength)
         return rules
       }

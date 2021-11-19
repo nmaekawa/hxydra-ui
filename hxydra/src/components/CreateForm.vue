@@ -114,6 +114,7 @@
                     persistent-hint
                     :disabled="approx_date.length > 0"
                     clearable
+                    :rules="dateAfterRule"
                     @click:clear="launch_date = ''"
                   >
                   </v-text-field>
@@ -147,6 +148,7 @@
                     :disabled="approx_date.length > 0"
                     clearable
                     @click:clear="end_date = ''"
+                    :rules="dateBeforeRule"
                     v-on:keydown="preventBackspace"
                   >
                   </v-text-field>
@@ -218,7 +220,7 @@
     name: 'EditForm',
 
     data: () => ({
-      prefix: 'XMple',
+      prefix: '',
       prefix_help: false,
       valid: false,
       created: 'date',
@@ -328,9 +330,15 @@
     },
     computed: {
       launchDateDisplay() {
+        if (this.$refs.createform) {
+          this.$refs.createform.validate()
+        }
         return this.launch_date
       },
       endDateDisplay() {
+        if (this.$refs.createform) {
+          this.$refs.createform.validate()
+        }
         return this.end_date
       },
       nickname() {
@@ -343,6 +351,22 @@
         const ruleMin = v => (v || '').length > 0 || 'A minum of 1 char is required'
         rules.push(ruleMax)
         rules.push(ruleMin)
+        return rules
+      },
+      dateAfterRule () {
+        const rules = []
+        const ruleAddEnd = v => !v || (v && (this.end_date !== null) && (this.end_date !== undefined) && (this.end_date !== '')) || 'Must add end date'
+        const ruleAft = v => !v || v <= this.end_date || 'Date should not be after End Date'
+        rules.push(ruleAddEnd)
+        rules.push(ruleAft)
+        return rules
+      },
+      dateBeforeRule () {
+        const rules = []
+        const ruleAddLaunch = v => !v || (v && (this.launch_date !== null) && (this.launch_date !== undefined) && (this.launch_date !== '')) || 'Must add launch date'
+        const ruleBef = v => !v || v >= this.launch_date || 'Date should not be before Launch Date'
+        rules.push(ruleAddLaunch)
+        rules.push(ruleBef)
         return rules
       },
       posIntRules () {
