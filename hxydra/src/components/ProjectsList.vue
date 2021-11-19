@@ -47,6 +47,9 @@
         </v-btn>
         <v-spacer/>
         <v-btn class="mr-3">
+          New Sequence
+        </v-btn>
+        <v-btn class="mr-3">
           New Version
         </v-btn>
         <v-btn class="mr-3">
