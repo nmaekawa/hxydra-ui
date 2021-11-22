@@ -236,27 +236,6 @@
       }],
       api_projects_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/project/',
       projects: [],
-      // projects: [{
-      //   nickname: 'HIN_v1',
-      //   title: "Health in Numbers: Quantitative Methods in Clinical & Public Health Research",
-      //   launch_date: '2012-10-15',
-      //   end_date: '',
-      // }, {
-      //   nickname: 'CS50x_v1',
-      //   launch_date: '2012-10-15',
-      //   title:  'CS50\'s Introduction to Computer Science',
-      //   end_date: '',
-      // }, {
-      //   nickname: 'Copy_v1',
-      //   launch_date: '2013-01-18',
-      //   title:  'Copyright',
-      //   end_date: '',
-      // }, {
-      //   nickname: 'Anat_v1_02',
-      //   launch_date: '2023-06-23',
-      //   title:  'Human Anatomy: Musculoskeletal Cases',
-      //   end_date: '',
-      // }]
     }),
     methods: {
       filter (value, search) {

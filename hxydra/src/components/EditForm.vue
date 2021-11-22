@@ -33,13 +33,21 @@
           </v-col>
         </v-row>
         <v-row class="mb-5">
-          <v-col class="col-7">
+          <v-col class="col-4">
             <v-text-field
               v-model="course.common_name"
               label="Common Project Name"
               :rules="commonNameLength"
               required
             ></v-text-field>
+          </v-col>
+          <v-col class="col-3">
+            <v-select
+              :items="school"
+              label="Revenue Schools"
+              v-model="course.revenue_school"
+              multiple
+            ></v-select>
           </v-col>
           <v-col class="col-2">
             <v-text-field
@@ -57,7 +65,7 @@
           </v-col>
         </v-row>
         <v-card class="pa-5 mb-5">
-          <v-card-subtitle>Course Run Metadata</v-card-subtitle>
+          <v-card-subtitle>Run Metadata</v-card-subtitle>
           <v-row>
             <v-col class="col-3">
               <v-text-field
@@ -97,33 +105,49 @@
             </v-col>
           </v-row>
           <v-row>
+            <v-col class="col-6">
+              <v-text-field
+                label="Quick-Fill edX"
+                v-model="quickfilledx"
+                placeholder="course-v1:HarvardX+PH211x+1T2021"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col class="col-6">
+              <v-text-field
+                label="Quick-Fill HBSO"
+                v-model="quickfillhbso"
+                placeholder="DSFB2106A04"
+              >
+              </v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
             <v-col class="col-3">
               <v-text-field
-                label="Course Run"
+                label="Program Run"
                 v-model="course.program_run"
                 placeholder="e.g., 2T2021"
-                required
               ></v-text-field>
             </v-col><v-col class="col-3">
               <v-text-field
                 v-model="course.program_code"
-                label="Course Number"
+                label="Program Number"
                 placeholder="e.g., AA123x"
-                required
               ></v-text-field>
             </v-col>
             <v-col class="col-6">
               <v-text-field
                 v-model="course.program_id"
-                label="Course ID"
+                label="Run ID"
                 placeholder="e.g., HarvardX/AA123x/2T2021"
-                required
+                hint="(Wave ID for HBSO. Course ID for edX)"
               ></v-text-field>
             </v-col>
           </v-row>
         </v-card>
         <v-card class="pa-5 mb-5">
-          <v-card-subtitle>Dates</v-card-subtitle>
+          <v-card-subtitle>Dates (YYYY-MM-DD)</v-card-subtitle>
           <v-row>
             <v-col class="col-4 mt-3">
               <v-layout row wrap>
@@ -201,64 +225,6 @@
             <v-col class="mx-a col-4">
               <v-layout row wrap>
                 <v-menu
-                  v-model="sowDatePop"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                  max-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      label="SOW Approval Date"
-                      prepend-icon="mdi-calendar-month"
-                      :value="sowDateDisplay"
-                      v-on="on"
-                      clearable
-                      @click:clear="course.sow_approval_date = ''"
-                    >
-                    </v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="course.sow_approval_date"
-                    no-title
-                    @change="sowDatePop = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-layout>
-            </v-col>
-            <v-col class="mx-a col-4">
-              <v-layout row wrap>
-                <v-menu
-                  v-model="facDatePop"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                  max-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      label="Faculty Agreement Signed Date"
-                      prepend-icon="mdi-calendar-month"
-                      :value="facDateDisplay"
-                      v-on="on"
-                      clearable
-                      @click:clear="course.faculty_agreement_date = ''"
-                    >
-                    </v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="course.faculty_agreement_date"
-                    no-title
-                    @change="facDatePop = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-layout>
-            </v-col>
-            <v-col class="mx-a col-4">
-              <v-layout row wrap>
-                <v-menu
                   v-model="marketingDatePop"
                   :close-on-content-click="false"
                   transition="scale-transition"
@@ -286,8 +252,36 @@
                 </v-menu>
               </v-layout>
             </v-col>
-          </v-row>
-          <v-row>
+            <v-col class="mx-a col-4">
+              <v-layout row wrap>
+                <v-menu
+                  v-model="appOpenDatePop"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                  max-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      label="Application Open Date"
+                      prepend-icon="mdi-calendar-month"
+                      :value="appOpenDateDisplay"
+                      v-on="on"
+                      clearable
+                      @click:clear="course.application_open_date = ''"
+                    >
+                    </v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="course.application_open_date"
+                    no-title
+                    @change="appOpenDatePop = false"
+                  >
+                  </v-date-picker>
+                </v-menu>
+              </v-layout>
+            </v-col>
             <v-col class="mx-a col-4">
               <v-layout row wrap>
                 <v-menu
@@ -318,6 +312,8 @@
                 </v-menu>
               </v-layout>
             </v-col>
+          </v-row>
+          <v-row>
             <v-col class="mx-a col-4">
               <v-layout row wrap>
                 <v-menu
@@ -375,6 +371,64 @@
                     @change="IDVCutOffDatePop = false"
                   >
                   </v-date-picker>
+                </v-menu>
+              </v-layout>
+            </v-col>
+            <v-col class="mx-a col-4">
+              <v-layout row wrap>
+                <v-menu
+                  v-model="sowDatePop"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                  max-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      label="SOW Approval Date"
+                      prepend-icon="mdi-calendar-month"
+                      :value="sowDateDisplay"
+                      v-on="on"
+                      clearable
+                      @click:clear="course.sow_approval_date = ''"
+                    >
+                    </v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="course.sow_approval_date"
+                    no-title
+                    @change="sowDatePop = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-layout>
+            </v-col>
+            <v-col class="mx-a col-4">
+              <v-layout row wrap>
+                <v-menu
+                  v-model="facDatePop"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                  max-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      label="Faculty Agreement Signed Date"
+                      prepend-icon="mdi-calendar-month"
+                      :value="facDateDisplay"
+                      v-on="on"
+                      clearable
+                      @click:clear="course.faculty_agreement_date = ''"
+                    >
+                    </v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="course.faculty_agreement_date"
+                    no-title
+                    @change="facDatePop = false"
+                  ></v-date-picker>
                 </v-menu>
               </v-layout>
             </v-col>
@@ -479,14 +533,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col class="col-6">
-            <v-select
-              :items="school"
-              label="Revenue Schools"
-              v-model="course.revenue_school"
-              multiple
-            ></v-select>
-          </v-col>
+          
           <v-col class="col-6">
             <v-select
               :items="school"
@@ -538,17 +585,20 @@
         </v-card>
         <v-row>
           <v-col class="col-12">
-            <v-card flat>
+            <v-card>
+              <v-card-subtitle>Project Team Members</v-card-subtitle>
                 <v-data-table
                   :headers="teamHeaders"
                   :items="course.team"
                   :items-per-page="10"
+                  :hide-default-footer="course.team.length <= 10"
                   :footer-props="{
                     showFirstLastPage: false,
                     itemsPerPageOptions: [5, 10, 20]
                   }
                   "
                 >
+
                   <template v-slot:item="{ item }">
                     <tr>
                       <td>
@@ -625,8 +675,7 @@
   </v-container>
 </template>
 <style>
-  #edit-form table {
-    border: 1px solid black;
+  #edit-form .v-data-table {
   }
   .v-menu__content::-webkit-scrollbar{
     -webkit-appearance: none;
@@ -661,12 +710,15 @@
       role: [],
       launchDatePop: false,
       endDatePop: false,
+      appOpenDatePop: false,
       advertiseDatePop: false,
       IDVCutOffDatePop: false,
       enrollmentCutOffDatePop: false,
       sowDatePop: false,
       facDatePop: false,
       marketingDatePop: false,
+      quickfilledx: '',
+      quickfillhbso: '',
       teamHeaders: [{
         text: 'Name',
         sortable: true,
@@ -732,6 +784,25 @@
       api_url_prefix: 'https://devo2.hxydra.hxtech.org/v1/kondo/',
       people_api_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/person/',
     }),
+    watch: {
+      quickfilledx: function(val) {
+        //course-v1:HarvardX+PH211x+1T2021
+        let normalizedID = val.replace('course-v1:', '').replace(/\+/g, '/')
+        let split_id = normalizedID.split('/')
+        this.course.program_run = split_id[1]
+        this.course.program_code = split_id[2]
+        this.course.program_id = normalizedID
+      },
+      quickfillhbso: function(val) {
+        try {
+          this.course.program_run = val.substring(4)
+          this.course.program_code = val.substring(0, 4)
+          this.course.program_id = val
+        } catch(e) {
+          console.log(e)
+        }
+      }
+    },
     methods: {
       getChoices () {
         // TODO: Try to get all these list values in one go
@@ -889,6 +960,9 @@
         }
         return this.getDate(this.course.end_date)
       },
+      appOpenDateDisplay() {
+        return this.getDate(this.course.application_open_date)
+      },
       advertiseDateDisplay() {
         return this.getDate(this.course.advertise_date)
       },
@@ -912,8 +986,10 @@
       },
       dateAfterRule () {
         const rules = []
+        const ruleDateInput = v => (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
         const ruleAddEnd = v => !v || (v && (this.course.end_date !== null) && (this.course.end_date !== undefined) && (this.course.end_date !== '')) || 'Must add end date'
         const ruleAft = v => !v || v <= this.getDate(this.course.end_date) || 'Date should not be after End Date'
+        rules.push(ruleDateInput)
         rules.push(ruleAddEnd)
         rules.push(ruleAft)
         return rules
