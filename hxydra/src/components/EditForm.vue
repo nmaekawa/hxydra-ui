@@ -169,6 +169,7 @@
                       clearable
                       @click:clear="course.launch_date = ''"
                       :disabled="course.fuzzy_launch_date !== null && course.fuzzy_launch_date.length > 0"
+                      @change="launchTxtUpdate"
                     >
                     </v-text-field>
                   </template>
@@ -200,6 +201,7 @@
                       clearable
                       @click:clear="course.end_date = ''"
                       :disabled="course.fuzzy_launch_date !== null && course.fuzzy_launch_date.length > 0"
+                      @change="endTxtUpdate"
                     >
                     </v-text-field>
                   </template>
@@ -240,6 +242,8 @@
                       v-on="on"
                       clearable
                       @click:clear="course.marketing_live_date = ''"
+                      @change="marketingTxtUpdate"
+                      :rules="dateRules"
                     >
                     </v-text-field>
                   </template>
@@ -270,6 +274,8 @@
                       v-on="on"
                       clearable
                       @click:clear="course.application_open_date = ''"
+                      @change="appOpenTxtUpdate"
+                      :rules="dateRules"
                     >
                     </v-text-field>
                   </template>
@@ -300,6 +306,8 @@
                       v-on="on"
                       clearable
                       @click:clear="course.advertise_date = ''"
+                      @change="appCloseTxtUpdate"
+                      :rules="dateRules"
                     >
                     </v-text-field>
                   </template>
@@ -332,6 +340,8 @@
                       v-on="on"
                       clearable
                       @click:clear="course.enrollment_date = ''"
+                      @change="enrollmentTxtUpdate"
+                      :rules="dateRules"
                     >
                     </v-text-field>
                   </template>
@@ -362,6 +372,8 @@
                       v-on="on"
                       clearable
                       @click:clear="course.cert_enrollment_date = ''"
+                      @change="certEnrollmentTxtUpdate"
+                      :rules="dateRules"
                     >
                     </v-text-field>
                   </template>
@@ -392,6 +404,8 @@
                       v-on="on"
                       clearable
                       @click:clear="course.sow_approval_date = ''"
+                      @change="sowTxtUpdate"
+                      :rules="dateRules"
                     >
                     </v-text-field>
                   </template>
@@ -421,6 +435,8 @@
                       v-on="on"
                       clearable
                       @click:clear="course.faculty_agreement_date = ''"
+                      @change="facTxtUpdate"
+                      :rules="dateRules"
                     >
                     </v-text-field>
                   </template>
@@ -941,6 +957,34 @@
       },
       triggerDateValidation() {
         console.log(this.$refs.editform.validate())
+      },
+      launchTxtUpdate(e) {
+        this.course.launch_date = e
+      },
+      endTxtUpdate(e) {
+        this.course.end_date = e
+      },
+      marketingTxtUpdate(e) {
+        this.course.marketing_live_date = e
+      },
+      appOpenTxtUpdate(e) {
+        this.course.application_open_date = e
+      },
+      appCloseTxtUpdate(e) {
+        this.course.advertise_date = e
+        //this.course.application_close_date = e
+      },
+      enrollmentTxtUpdate(e) {
+        this.course.enrollment_date = e
+      },
+      certEnrollmentTxtUpdate(e) {
+        this.cert_enrollment_date = e
+      },
+      sowTxtUpdate(e) {
+        this.sow_approval_date = e
+      },
+      facTxtUpdate(e) {
+        this.faculty_agreement_date = e
       }
     },
     mounted() {
@@ -984,6 +1028,12 @@
       filteredPlatformDiscipline() {
         return this.platformdiscipline.filter(d => d.par == this.course.delivery_platform)
       },
+      dateRules () {
+        const rules = []
+        const ruleDateInput = v => (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
+        rules.push(ruleDateInput)
+        return rules
+      },
       dateAfterRule () {
         const rules = []
         const ruleDateInput = v => (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
@@ -996,8 +1046,10 @@
       },
       dateBeforeRule () {
         const rules = []
+        const ruleDateInput = v => (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
         const ruleAddLaunch = v => !v || (v && (this.course.launch_date !== null) && (this.course.launch_date !== undefined) && (this.course.launch_date !== '')) || 'Must add launch date'
         const ruleBef = v => !v || v >= this.getDate(this.course.launch_date) || 'Date should not be before Launch Date'
+        rules.push(ruleDateInput)
         rules.push(ruleAddLaunch)
         rules.push(ruleBef)
         return rules
