@@ -46,6 +46,7 @@
               :items="school"
               label="Revenue Schools"
               v-model="course.revenue_school"
+              @input="revSchoolUpdated"
               multiple
             ></v-select>
           </v-col>
@@ -823,7 +824,6 @@
       getChoices () {
         // TODO: Try to get all these list values in one go
         for (const s of this.setup_options) {
-          console.log("what")
           this.$http.get(this.api_url_prefix +s['tech_name']+'/')
             .then(e => {
               if ('par' in s){
@@ -856,7 +856,6 @@
         );
         this.people = data.map(p => (p.first_name + ' ' + p.last_name))
         this.full_people = data
-        console.log("PEOPLE", this.people)
       },
       filter (value, search) {
         return value != null &&
@@ -898,7 +897,6 @@
             console.log("Updated", data)
             this.$emit('closeEdit', this.course)
           }).catch(e => {
-            console.log('uh', e)
             self.errorBox = true
               let mess = `(${e.response.status}) ${e.response.statusText}`
               switch(e.response.status) {
@@ -933,10 +931,14 @@
           return null
         }
       },
+      revSchoolUpdated() {
+        this.course.sponsoring_school = this.course.revenue_school.slice()
+      },
       changeDeliveryPlatform () {
         let current_disciplines = this.platformdiscipline.filter(d => this.course.platform_discipline.indexOf(d.text) > -1)
         current_disciplines = current_disciplines.filter(d => d.par == this.course.delivery_platform)
         this.course.platform_discipline = current_disciplines.map(e => e.text)
+        this.course.technical_platform = this.course.delivery_platform
       },
       addTeam() {
         let personItem = this.full_people.filter(e => (e.first_name + " " + e.last_name) == this.addPerson)[0]
@@ -1030,7 +1032,7 @@
       },
       dateRules () {
         const rules = []
-        const ruleDateInput = v => (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
+        const ruleDateInput = v => !v || (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
         rules.push(ruleDateInput)
         return rules
       },
