@@ -27,5 +27,11 @@ module.exports = {
       title: 'Configure Choice Lists',
       chunks: ['chunk-vendors', 'chunk-common', 'choice']
     },
+    'reportlist': {
+      entry: './src/pages/reportlist/main.js',
+      template: 'public/reportlist.html',
+      title: 'Reports List',
+      chunks: ['chunk-vendors', 'chunk-common', 'reportlist']
+    }
   }
 }

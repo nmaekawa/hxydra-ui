@@ -28,6 +28,18 @@
         fab
         dark
         small
+        href="/reportlist/"
+        color="#483682 accent"
+      >
+        <v-icon>
+          mdi-download
+        </v-icon>
+      </v-btn>
+      <v-btn
+        class="mx-1"
+        fab
+        dark
+        small
         href="/choice/"
         color="#483682 accent"
       >
