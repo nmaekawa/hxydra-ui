@@ -6,7 +6,7 @@
       dark
     >
       <div class="d-flex align-center">
-        <div class="text-h4 font-weight-bold">Reports</div>
+        <v-btn class="text-h4 font-weight-bold text-none" text href="/projects/">Kondo</v-btn><span class="text-h7">Reports</span>
       </div>
     </v-app-bar>
 
