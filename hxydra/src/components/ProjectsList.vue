@@ -213,7 +213,7 @@
         text: 'Project Title',
         sortable: true,
         value: 'title',
-        width: '55%'
+        width: '50%'
       },{
         text: 'Launch Date',
         sortable: true,
@@ -223,7 +223,7 @@
         text: 'End Date',
         sortable: true,
         value: 'end_date',
-        width: '10%'
+        width: '15%'
       }, {
         text: 'Actions',
         sortable: false,
