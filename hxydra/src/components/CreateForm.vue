@@ -342,8 +342,8 @@
         return this.end_date
       },
       nickname() {
-        let sequence_val = "_" + this.sequence_num
-        return this.prefix + sequence_val + "_v" + this.version + "_r" + this.run
+        let sequence_val = "_" + this.sequence_num.toString().padStart(2, '0')
+        return this.prefix + sequence_val + "_v" + this.version.toString().padStart(2, '0') + "_r" + this.run.toString().padStart(2, '0')
       },
       nicknameRules () {
         const rules = []
