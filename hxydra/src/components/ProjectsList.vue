@@ -46,13 +46,22 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-spacer/>
-        <v-btn class="mr-3">
+        <v-btn
+          class="mr-3"
+          @click="createNewSequence(rowItem)"
+        >
           New Sequence
         </v-btn>
-        <v-btn class="mr-3">
+        <v-btn
+          class="mr-3"
+          @click="createNewVersion(rowItem)"
+        >
           New Version
         </v-btn>
-        <v-btn class="mr-3">
+        <v-btn
+          class="mr-3"
+          @click="createNewRerun(rowItem)"
+        >
           New Run
         </v-btn>
         <v-btn
@@ -235,6 +244,7 @@
         value: 'fuzzy_launch_date'
       }],
       api_projects_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/project/',
+      api_copy_project_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/copy/',
       projects: [],
     }),
     methods: {
@@ -289,18 +299,59 @@
           .then(() => this.editing = false)
       },
       async deleteItem (item) {
-        await this.$http.delete(
+        const self = this;
+        await self.$http.delete(
           self.api_projects_url + item.nickname
           + '/'
         )
-          .then(() => this.projects = this.projects.filter(e => e.nickname !== item.nickname))
-          .then(() => this.detail = false)
-          .then(() => this.selected = undefined)
+          .then(() => self.projects = self.projects.filter(e => e.nickname !== item.nickname))
+          .then(() => self.detail = false)
+          .then(() => self.selected = undefined)
           .catch(function(e) {
             self.errorBox = true
             self.errorMessage = `API could not be reached. Data for ${item.nickname} was not deleted.`
             console.log(e)
           })
+      },
+      async createNewSequence (item) {
+        const self = this;
+        await self.$http.post(
+          self.api_copy_project_url + 'sequence/' + item.nickname + '/'
+        )
+          .then((data) => self.selected = data.data)
+          .then(() => self.editing = true)
+          .then(() => self.detail = false)
+          .catch(function(e) {
+            if (e.response.data.message[0].indexOf('not most recent') > -1) {
+              // show pop up
+              console.log("should show popup")
+              if(confirm("Project is not most recent version. Are you sure you want to create new sequence from this older version?")) {
+                self.$http.post(
+                  self.api_copy_project_url + 'sequence/' + item.nickname + '/?yis=true'
+                )
+              }
+            } else {
+              console.log("What the")
+            }
+          })
+      },
+      async createNewVersion (item) {
+        const self = this;
+        await this.$http.post(
+          self.api_copy_project_url + 'version/' + item.nickname + '/'
+        )
+          .then((data) => this.selected = data.data)
+          .then(() => this.editing = true)
+          .then(() => this.detail = false)
+      },
+      async createNewRerun (item) {
+        const self = this;
+        await this.$http.post(
+          self.api_copy_project_url + 'run/' + item.nickname + '/'
+        )
+          .then((data) => this.selected = data.data)
+          .then(() => this.editing = true)
+          .then(() => this.detail = false)
       },
       closeEdit (e) {
         this.editing = false
