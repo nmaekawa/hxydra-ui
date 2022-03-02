@@ -23,12 +23,13 @@
       <v-card-title>
         Report List
       </v-card-title>
+      <v-card-text>(Right click + Download/Save As)</v-card-text>
       <v-list flat>
         <v-list-item
           v-for="(item, i) in reports"
           :key="i"
         >
-          <a href="item.link">{{item.name}}</a>
+          <a :href="api_domain + item.url" :download="item.description + '.csv'" target="_blank">{{item.description}}</a>
         </v-list-item>
       </v-list>
     </v-card>
@@ -42,7 +43,10 @@
     },
     data: () => ({
       reports: [],
-      api_url: '',
+      api_domain: 'https://devo2.hxydra.hxtech.org',
+      api_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/report/',
+      errorBox: false,
+      errorMessage: '',
       test_reports: [{
         name: 'Courses Launching in 14 Days',
         link: 'https://google.com'
