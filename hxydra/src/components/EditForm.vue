@@ -884,7 +884,7 @@
         this.$http.put(
             'https://devo2.hxydra.hxtech.org/v1/kondo/project/' + this.course.nickname + '/',
             options
-          ).then(data => {
+          ).then(() => {
             this.$emit('closeEdit', this.course)
           }).catch(e => {
             self.errorBox = true
