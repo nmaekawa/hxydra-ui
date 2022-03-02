@@ -322,7 +322,7 @@
           .catch(function(e) {
             if (e.response.data.message[0].indexOf('not most recent') > -1) {
               // show pop up
-              if(confirm("Project is not most recent version. Are you sure you want to create new sequence from this older version?")) {
+              if(confirm("Project is not most recent instance. Are you sure you want to create new sequence from this older instance?")) {
                 self.$http.post(
                   self.api_copy_project_url + 'sequence/' + item.nickname + '/?yis=true'
                 )
@@ -340,6 +340,18 @@
           .then((data) => this.selected = data.data)
           .then(() => this.editing = true)
           .then(() => this.detail = false)
+          .catch(function(e) {
+            if (e.response.data.message[0].indexOf('not most recent') > -1) {
+              // show pop up
+              if(confirm("Project is not most recent instance. Are you sure you want to create new version from this older instance?")) {
+                self.$http.post(
+                  self.api_copy_project_url + 'version/' + item.nickname + '/?yis=true'
+                )
+              }
+            } else {
+              console.log(e)
+            }
+          })
       },
       async createNewRerun (item) {
         const self = this;
@@ -349,12 +361,28 @@
           .then((data) => this.selected = data.data)
           .then(() => this.editing = true)
           .then(() => this.detail = false)
+          .catch(function(e) {
+            if (e.response.data.message[0].indexOf('not most recent') > -1) {
+              // show pop up
+              if(confirm("Project is not most recent run. Are you sure you want to create new run from this older instance?")) {
+                self.$http.post(
+                  self.api_copy_project_url + 'run/' + item.nickname + '/?yis=true'
+                )
+              }
+            } else {
+              console.log(e)
+            }
+          })
       },
       closeEdit (e) {
         this.editing = false
         if (e) {
           let indexFound = this.projects.findIndex(obj => obj.nickname === e.nickname)
-          this.$set(this.projects, indexFound, e)
+          if (indexFound == -1) {
+            this.projects.push(e)
+          } else {
+            this.$set(this.projects, indexFound, e)
+          }
         }
       },
       launchDateDisplay( item ) {

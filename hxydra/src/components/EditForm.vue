@@ -445,7 +445,8 @@
                 v-model="course.cert_rate_to_certify"
                 label="Rate to Certify"
                 :disabled="!course.cert_available"
-                :rules="integerOnly"
+                oninput="this.value = Math.round(this.value)"
+                :rules="posIntRules"
               >
               </v-text-field>
             </v-col>
@@ -497,7 +498,6 @@
               label="Course Length (in weeks)"
               type="number"
               :rules="posIntRules"
-              oninput="if (this.value < 1) {this.value = 0}"
               required
             ></v-text-field>
           </v-col>
@@ -1097,6 +1097,12 @@
         const rules = []
         const maxNameLength = v => !v || v.length < 50 || 'Must be max 50 chars'
         rules.push(maxNameLength)
+        return rules
+      },
+      moreThanOne() {
+        const rules = []
+        const gtOne = v => !v || v > 0 || 'Duration must be bigger than zero weeks'
+        rules.push(gtOne)
         return rules
       }
     }
