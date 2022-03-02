@@ -94,22 +94,22 @@
               {{ getDate(course.sow_approval_date) }}
             </v-col>
             <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
-              Faculty Agreement Date:
+              Application Open Date:
             </v-col>
             <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
-              {{ getDate(course.faculty_agreement_date) }}
+              {{ getDate(course.application_open_date) }}
             </v-col>
             <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
-              Advertise Date:
+              Application Close Date:
             </v-col>
             <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
-              {{ getDate(course.advertise_date) }}
+              {{ getDate(course.application_close_date) }}
             </v-col>
             <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
               Marketing Date:
             </v-col>
             <v-col class="col-lg-3 col-md-8 col-sm-4 col-9">
-              {{ getDate(course.marketing_live_date) }}
+              {{ getDate(course.marketing_launch_date) }}
             </v-col>
             <v-col class="text-caption col-lg-3 col-md-3 col-sm-2 col-3">
               Course Enrollment Date:
@@ -204,7 +204,7 @@
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col v-if="course.faculty_agreement_date" class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
+                          <v-col v-if="course.faculty_agreement_signed" class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
                             <v-icon color="green">mdi-check-circle</v-icon>
                           </v-col>
                           <v-col v-else class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2">
@@ -362,8 +362,8 @@
               <v-card flat>
                 <v-card-text>
                   Platform Discipline:
-                  <v-chip v-for="d in course.platform_discipline" v-bind:key="d">
-                    {{ d }}
+                  <v-chip v-for="d in course.platform_discipline" v-bind:key="d.pk">
+                    {{ d.name }}
                   </v-chip>
                 </v-card-text>
                 <v-card-text>

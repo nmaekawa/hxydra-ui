@@ -242,14 +242,14 @@
                       :value="marketingDateDisplay"
                       v-on="on"
                       clearable
-                      @click:clear="course.marketing_live_date = ''"
+                      @click:clear="course.marketing_launch_date = ''"
                       @change="marketingTxtUpdate"
                       :rules="dateRules"
                     >
                     </v-text-field>
                   </template>
                   <v-date-picker
-                    v-model="course.marketing_live_date"
+                    v-model="course.marketing_launch_date"
                     no-title
                     @change="marketingDatePop = false"
                   >
@@ -292,7 +292,7 @@
             <v-col class="mx-a col-4">
               <v-layout row wrap>
                 <v-menu
-                  v-model="advertiseDatePop"
+                  v-model="appCloseDatePop"
                   :close-on-content-click="false"
                   transition="scale-transition"
                   offset-y
@@ -303,19 +303,19 @@
                     <v-text-field
                       label="Application Close Date"
                       prepend-icon="mdi-calendar-month"
-                      :value="advertiseDateDisplay"
+                      :value="appCloseDateDisplay"
                       v-on="on"
                       clearable
-                      @click:clear="course.advertise_date = ''"
+                      @click:clear="course.application_close_date = ''"
                       @change="appCloseTxtUpdate"
                       :rules="dateRules"
                     >
                     </v-text-field>
                   </template>
                   <v-date-picker
-                    v-model="course.advertise_date"
+                    v-model="course.application_close_date"
                     no-title
-                    @change="advertiseDatePop = false"
+                    @change="appCloseDatePop = false"
                   >
                   </v-date-picker>
                 </v-menu>
@@ -418,37 +418,6 @@
                 </v-menu>
               </v-layout>
             </v-col>
-            <v-col class="mx-a col-4">
-              <v-layout row wrap>
-                <v-menu
-                  v-model="facDatePop"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                  max-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      label="Faculty Agreement Signed Date"
-                      prepend-icon="mdi-calendar-month"
-                      :value="facDateDisplay"
-                      v-on="on"
-                      clearable
-                      @click:clear="course.faculty_agreement_date = ''"
-                      @change="facTxtUpdate"
-                      :rules="dateRules"
-                    >
-                    </v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="course.faculty_agreement_date"
-                    no-title
-                    @change="facDatePop = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-layout>
-            </v-col>
           </v-row>
         </v-card>
         <v-card class="pa-5 mb-5">
@@ -472,10 +441,11 @@
             </v-col>
             <v-col class="col-3">
               <v-text-field
-                number
+                type="number"
                 v-model="course.cert_rate_to_certify"
                 label="Rate to Certify"
                 :disabled="!course.cert_available"
+                :rules="integerOnly"
               >
               </v-text-field>
             </v-col>
@@ -488,6 +458,13 @@
                 <v-checkbox
                   v-model="course.self_paced"
                   label="Self-Paced"
+                >
+                </v-checkbox>
+              </v-col>
+              <v-col class="col-9">
+                <v-checkbox
+                  v-model="course.faculty_agreement_signed"
+                  label="Faculty Agreement Signed"
                 >
                 </v-checkbox>
               </v-col>
@@ -572,6 +549,7 @@
           </v-col>
           <v-col class="col-6">
             <v-select
+              item-value="pk"
               :items="filteredPlatformDiscipline"
               label="Platform Disciplines"
               v-model="course.platform_discipline"
@@ -728,7 +706,7 @@
       launchDatePop: false,
       endDatePop: false,
       appOpenDatePop: false,
-      advertiseDatePop: false,
+      appCloseDatePop: false,
       IDVCutOffDatePop: false,
       enrollmentCutOffDatePop: false,
       sowDatePop: false,
@@ -777,7 +755,8 @@
         'tech_name': 'platformdiscipline',
         'key': 'name',
         'par': 'platform',
-        'proper_par_name': 'Platform Name'
+        'proper_par_name': 'Platform Name',
+        'pk': 'pk'
       }, {
         'proper_name': 'HX Discipline',
         'tech_name': 'hxdiscipline',
@@ -827,12 +806,23 @@
           this.$http.get(this.api_url_prefix +s['tech_name']+'/')
             .then(e => {
               if ('par' in s){
-                this[s['tech_name']] = e.data.map(function(f) {
-                  return {
-                    'par': f[s['par']],
-                    'text': f[s['key']]
-                  }
-                })
+                if ('pk' in s) {
+                  this[s['tech_name']] = e.data.map(function(f) {
+                    return {
+                      'par': f[s['par']],
+                      'text': f[s['key']],
+                      'pk': f[s['pk']]
+                    }
+                  })
+                } else {
+                  this[s['tech_name']] = e.data.map(function(f) {
+                    return {
+                      'par': f[s['par']],
+                      'text': f[s['key']]
+                    }
+                  })
+                }
+
               } else {
                 this[s['tech_name']] = e.data.map(function(f) {
                   return {
@@ -864,7 +854,6 @@
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
       },
       closeEdit () {
-        console.log("Emitting closeEdit")
         this.$emit('closeEdit', false)
       },
       saveChanges () {
@@ -880,12 +869,14 @@
           options.end_date = self.normalizeDate(options.end_date)
         }
 
-        options.faculty_agreement_date = self.normalizeDate(options.faculty_agreement_date)
         options.sow_approval_date = self.normalizeDate(options.sow_approval_date)
-        options.advertise_date = self.normalizeDate(options.advertise_date)
         options.enrollment_date = self.normalizeDate(options.enrollment_date)
         options.cert_enrollment_date = self.normalizeDate(options.cert_enrollment_date)
-        options.marketing_live_date = self.normalizeDate(options.marketing_live_date)
+        options.marketing_launch_date = self.normalizeDate(options.marketing_launch_date)
+        options.platform_discipline = self.normalizeDiscipline(options.platform_discipline)
+        options.technical_platform = self.normalizeTechnicalPlatform(options.technical_platform)
+        options.application_open_date = self.normalizeDate(options.application_open_date)
+        options.application_close_date = self.normalizeDate(options.application_close_date)
         if (options.subactivity === '') {
           options.subactivity = null
         }
@@ -894,7 +885,6 @@
             'https://devo2.hxydra.hxtech.org/v1/kondo/project/' + this.course.nickname + '/',
             options
           ).then(data => {
-            console.log("Updated", data)
             this.$emit('closeEdit', this.course)
           }).catch(e => {
             self.errorBox = true
@@ -931,14 +921,37 @@
           return null
         }
       },
+      normalizeTechnicalPlatform(plat) {
+        if (plat == "UNDEF") {
+          return undefined
+        }
+        return plat
+      },
+      normalizeDiscipline(discDict) {
+        let final_disc = []
+        let inter_disc = []
+        discDict.forEach(dis => {
+          Array.prototype.push.apply(inter_disc, this.platformdiscipline.filter(p => p.pk == dis))
+        })
+        inter_disc.forEach(dis2 => {
+          final_disc.push({
+            'pk': dis2['pk'],
+            'name': dis2['text'],
+            'platform': dis2['par']
+          })
+        })
+        return final_disc
+      },
       revSchoolUpdated() {
         this.course.sponsoring_school = this.course.revenue_school.slice()
       },
       changeDeliveryPlatform () {
-        let current_disciplines = this.platformdiscipline.filter(d => this.course.platform_discipline.indexOf(d.text) > -1)
-        current_disciplines = current_disciplines.filter(d => d.par == this.course.delivery_platform)
-        this.course.platform_discipline = current_disciplines.map(e => e.text)
-        this.course.technical_platform = this.course.delivery_platform
+        this.course.platform_discipline = []
+        // let current_disciplines = this.platformdiscipline.filter(d => this.course.platform_discipline.indexOf(d.text) > -1)
+        // this.filteredPlatformDiscipline = current_disciplines.filter(d => d.par == this.course.delivery_platform)
+        // console.log(this.filteredPlatformDiscipline)
+        // this.course.platform_discipline = current_disciplines.map(e => e.text)
+        // this.course.technical_platform = this.course.delivery_platform
       },
       addTeam() {
         let personItem = this.full_people.filter(e => (e.first_name + " " + e.last_name) == this.addPerson)[0]
@@ -952,13 +965,12 @@
       },
       deletePerson(item) {
         this.course.team = this.course.team.filter(e => e.pk != item.pk)
-        console.log(item)
       },
       triggerEstimatedEffortValidation() {
         this.$refs.editform.validate()
       },
       triggerDateValidation() {
-        console.log(this.$refs.editform.validate())
+        this.$refs.editform.validate()
       },
       launchTxtUpdate(e) {
         this.course.launch_date = e
@@ -967,14 +979,13 @@
         this.course.end_date = e
       },
       marketingTxtUpdate(e) {
-        this.course.marketing_live_date = e
+        this.course.marketing_launch_date = e
       },
       appOpenTxtUpdate(e) {
         this.course.application_open_date = e
       },
       appCloseTxtUpdate(e) {
-        this.course.advertise_date = e
-        //this.course.application_close_date = e
+        this.course.application_close_date = e
       },
       enrollmentTxtUpdate(e) {
         this.course.enrollment_date = e
@@ -985,9 +996,6 @@
       sowTxtUpdate(e) {
         this.sow_approval_date = e
       },
-      facTxtUpdate(e) {
-        this.faculty_agreement_date = e
-      }
     },
     mounted() {
       this.getChoices()
@@ -1009,8 +1017,8 @@
       appOpenDateDisplay() {
         return this.getDate(this.course.application_open_date)
       },
-      advertiseDateDisplay() {
-        return this.getDate(this.course.advertise_date)
+      appCloseDateDisplay() {
+        return this.getDate(this.course.application_close_date)
       },
       IDVCutOffDateDisplay() {
         return this.getDate(this.course.cert_enrollment_date)
@@ -1021,11 +1029,8 @@
       sowDateDisplay() {
         return this.getDate(this.course.sow_approval_date)
       },
-      facDateDisplay() {
-        return this.getDate(this.course.faculty_agreement_date)
-      },
       marketingDateDisplay() {
-        return this.getDate(this.course.marketing_live_date)
+        return this.getDate(this.course.marketing_launch_date)
       },
       filteredPlatformDiscipline() {
         return this.platformdiscipline.filter(d => d.par == this.course.delivery_platform)
@@ -1034,6 +1039,12 @@
         const rules = []
         const ruleDateInput = v => !v || (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
         rules.push(ruleDateInput)
+        return rules
+      },
+      integerOnly () {
+        const rules = []
+        const ruleInteger = v => !v || Number.isInteger(v) || 'Number must be an integer'
+        rules.push(ruleInteger)
         return rules
       },
       dateAfterRule () {

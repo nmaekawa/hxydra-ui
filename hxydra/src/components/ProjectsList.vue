@@ -251,7 +251,6 @@
       filter (value, search) {
         if (value && search) {
           if (typeof(value) !== "undefined") {
-            console.log(value)
             return value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) > -1
           }
         }
@@ -263,7 +262,6 @@
           self.api_projects_url
         )
           .then(data => {
-            console.log(data)
             self.projects = data.data
           })
           .catch(function(e) {
@@ -324,14 +322,13 @@
           .catch(function(e) {
             if (e.response.data.message[0].indexOf('not most recent') > -1) {
               // show pop up
-              console.log("should show popup")
               if(confirm("Project is not most recent version. Are you sure you want to create new sequence from this older version?")) {
                 self.$http.post(
                   self.api_copy_project_url + 'sequence/' + item.nickname + '/?yis=true'
                 )
               }
             } else {
-              console.log("What the")
+              console.log(e)
             }
           })
       },
