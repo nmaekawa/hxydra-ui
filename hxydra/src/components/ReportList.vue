@@ -23,13 +23,13 @@
       <v-card-title>
         Report List
       </v-card-title>
-      <v-card-text>(Right click + Download/Save As)</v-card-text>
+      <v-card-text>If links don't download when clicking: Right click + Download/Save As</v-card-text>
       <v-list flat>
         <v-list-item
           v-for="(item, i) in reports"
           :key="i"
         >
-          <a :href="api_domain + item.url" :download="item.description + '.csv'" target="_blank">{{item.description}}</a>
+          <a :href="api_domain + item.url" :download="item.description + '.csv'" target="_blank">{{item.description}}</a>&nbsp;(<a :href="api_domain + item.url + '?format=json'" :download="item.description + '.json'" target="_blank">JSON</a>)
         </v-list-item>
       </v-list>
     </v-card>
