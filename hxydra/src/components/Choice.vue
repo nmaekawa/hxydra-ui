@@ -60,7 +60,14 @@
                 {{item['last_name']}}
               </td>
               <td>
-                {{item['job_title']}}
+                <div v-for="e in item.email" v-bind:key="e">
+                  <a :href="'mailto:' + e">{{e}}</a>
+                </div>
+              </td>
+              <td>
+                <div v-for="a in item.affiliation" v-bind:key="a">
+                  {{a}}
+                </div>
               </td>
               <td>
                 <v-container>
@@ -132,10 +139,33 @@
           ></v-text-field>
           <v-text-field
             class="mx-10"
-            v-model="newJobTitle"
-            placeholder="Job Title"
+            v-model="newEmail"
+            placeholder="Email"
           ></v-text-field>
-          <v-btn color="#483682" dark class="mr-5" @click="editMode = true; addNewPerson()">Add</v-btn>
+          <v-text-field
+            class="mx-10"
+            v-model="newAffiliation"
+            placeholder="Affiliation(s)"
+            :rules="schoolCheck"
+          ></v-text-field>
+          <v-btn
+            color="#483682"
+            v-if="isEditingPerson"
+            dark
+            class="mr-5"
+            @click="editMode = true; updatePerson()"
+          >
+            Update
+          </v-btn>
+          <v-btn
+            color="#483682"
+            v-if="!isEditingPerson"
+            dark
+            class="mr-5"
+            @click="editMode = false; addNewPerson()"
+          >
+            Update
+          </v-btn>
           <v-btn @click="addPeople = false">Cancel</v-btn>
         </v-container>
       </v-card>
@@ -214,6 +244,7 @@
       search: '',
       idRef: '',
       isEditingChoice: false,
+      isEditingPerson: false,
       enrollmenttype: [],
       technicalplatform: [],
       newChoice: undefined,
@@ -236,9 +267,13 @@
         sortable: true,
         value: 'last_name',
       }, {
-        text: 'Job Title',
+        text: 'Email',
         sortable: true,
-        value: 'job_title',
+        value: 'email',
+      }, {
+        text: 'Affiliation(s)',
+        sortable: true,
+        value: 'affiliation',
       }, {
         text: 'Actions',
         sortable: false,
@@ -249,7 +284,8 @@
       debugDialog: false,
       newFirstName: '',
       newLastName: '',
-      newJobTitle: '',
+      newEmail: [],
+      newAffiliation: [],
       setup_options: [{
         'proper_name': 'Enrollment Type',
         'tech_name': 'enrollmenttype',
@@ -349,40 +385,69 @@
         
       },
       addNewPerson () {
+        console.log("Adding new person", this.editMode)
         if (this.editMode) {
           this.finishEditing()
-          return
+        } else {
+          console.log(this.newEmail, this.newAffiliation)
+          let person = {
+            'first_name': this.newFirstName,
+            'last_name': this.newLastName,
+            'email': this.newEmail.split(','),
+            'affiliation': this.newAffiliation.split(',')
+          }
+          console.log("Add", person)
+          this.$http.post(
+            this.api_url_prefix +'person/',
+            person
+          )
+          this.people.push(person)
+          this.addPeople = false
+          this.choiceSelected = ''
+          this.newFirstName = ''
+          this.newLastName = ''
+          this.newEmail = []
+          this.newAffiliation = []
         }
+      },
+      editPerson (person) {
+        this.newEmail = person.email.join(',')
+        this.isEditingPerson = true
+        this.newFirstName = person.first_name
+        this.newLastName = person.last_name
+        this.newAffiliation = person.affiliation.join(',')
+        this.idRef = person.pk
+        this.addPeople = true
+        this.editMode = true
+      },
+      updatePerson() {
+        let email_to_send = this.newEmail.length == 0 ? [] : this.newEmail.split(',')
+        let affiliation_to_send = this.newAffiliation.length == 0 ? [] : this.newAffiliation.split(',')
         let person = {
           'first_name': this.newFirstName,
           'last_name': this.newLastName,
-          'job_title': this.newJobTitle,
-          'id': this.people.length + 1
+          'email': email_to_send,
+          'affiliation': affiliation_to_send
         }
-        this.people.push(person)
-        this.addPeople = false
-        this.choiceSelected = ''
-        this.newFirstName = ''
-        this.newLastName = ''
-        this.newJobTitle = ''
-      },
-      editPerson (person) {
-        this.newJobTitle = person.job_title
-        this.newFirstName = person.first_name
-        this.newLastName = person.last_name
-        this.idRef = person.id
-        this.addPeople = true
+        this.$http.put(
+            this.api_url_prefix +'person/' + this.idRef + '/',
+            person
+          ).then(() => {
+            this.finishEditing()
+          })
+        this.isEditingPerson = false
       },
       finishEditing () {
         let foundIndex = -1
         let found = undefined
         for (let k = 0; k < this.people.length; k++) {
           let person = this.people[k]
-          if (person.id == this.idRef) {
+          if (person.pk == this.idRef) {
             foundIndex = k
             person.first_name = this.newFirstName,
             person.last_name = this.newLastName,
-            person.job_title = this.newJobTitle
+            person.email = this.newEmail.split(',')
+            person.affiliation = this.newAffiliation.split(',')
             found = person
           }
         }
@@ -391,7 +456,8 @@
         this.choiceSelected = ''
         this.newFirstName = ''
         this.newLastName = ''
-        this.newJobTitle = ''
+        this.newEmail = []
+        this.newAffiliation = []
       },
       deletePerson (person) {
         this.people = this.people.filter(e => e.id !== person.id)
@@ -399,7 +465,7 @@
       async deleteChoice() {
         let self = this
         await this.$http.delete(
-          this.api_url_prefix + this.choiceSelected + '/' + self.awaitingDelete.value.toLowerCase().replace(' ', '-') + '/'
+          this.api_url_prefix + this.choiceSelected + '/' + self.awaitingDelete.value.replace(' ', '-') + '/'
         )
           .then(e => {
             console.log('Worked', e)
@@ -493,7 +559,29 @@
           newValues[s['tech_name']] = this[s['tech_name']]
         }
         return newValues
-      }
+      },
+      schoolCheck () {
+        const rules = []
+        let schools = this.school
+        const checkSchool = school_str => {
+          let allFound = true
+          console.log(school_str, typeof(school_str))
+          if (school_str) { return true }
+          let school_list = school_str.split(',')
+          school_list.forEach(s => {
+            let found = false
+            schools.forEach(sch => {
+              if (s.trim() == sch.value) {found = true}
+            })
+            if (!found) {allFound = false}
+            console.log(s, found, allFound)
+          })
+          return allFound
+        }
+        const schoolVerify = v => !v || checkSchool(v) || 'Affiliation(s) must be a valid school acronym, i.e. HBS, HKS'
+        rules.push(schoolVerify)
+        return rules
+      },
     }
   }
 </script>
