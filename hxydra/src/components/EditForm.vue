@@ -777,8 +777,8 @@
       platformdiscipline: [],
       hxdiscipline: [],
       projectstatus: [],
-      api_url_prefix: 'https://devo2.hxydra.hxtech.org/v1/kondo/',
-      people_api_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/person/',
+      api_url_prefix: process.env.VUE_APP_KONDO_API_URL,
+      people_api_url: process.env.VUE_APP_KONDO_API_URL + 'person/',
     }),
     watch: {
       quickfilledx: function(val) {

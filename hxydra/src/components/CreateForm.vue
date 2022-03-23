@@ -253,7 +253,7 @@
       errorMessage: "",
       errorBox: false,
       approx_date: "",
-      api_url: "https://devo2.hxydra.hxtech.org/v1/kondo/project/"
+      api_url: process.env.VUE_APP_KONDO_API_URL + "project/"
     }),
     methods: {
       getTypes () {

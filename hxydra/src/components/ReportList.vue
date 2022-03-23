@@ -43,8 +43,8 @@
     },
     data: () => ({
       reports: [],
-      api_domain: 'https://devo2.hxydra.hxtech.org',
-      api_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/report/',
+      api_domain: process.env.VUE_APP_KONDO_API_DOMAIN,
+      api_url: process.env.VUE_APP_KONDO_API_URL + 'report/',
       errorBox: false,
       errorMessage: '',
       test_reports: [{

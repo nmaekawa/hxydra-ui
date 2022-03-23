@@ -215,7 +215,6 @@ try {
 } catch {
   perms = false
 }
-
   export default {
     name: 'ProjectsList',
     components: {
@@ -262,8 +261,8 @@ try {
         align: ' d-none',
         value: 'fuzzy_launch_date'
       }],
-      api_projects_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/project/',
-      api_copy_project_url: 'https://devo2.hxydra.hxtech.org/v1/kondo/copy/',
+      api_projects_url: process.env.VUE_APP_KONDO_API_URL + 'project/',
+      api_copy_project_url: process.env.VUE_APP_KONDO_API_URL + 'copy/',
       projects: [],
     }),
     methods: {
