@@ -389,6 +389,7 @@
     },
     data: () => ({
       searchTeam: '',
+      write_perm: document.cookie.split(';').map(function(x) { return x.split('=') }).filter(function(y) { return y[0].trim() == 'hx-perms' })[0][1].trim().indexOf('kondo-editor') > -1,
       teamHeaders: [{
         text: 'Name',
         sortable: true,

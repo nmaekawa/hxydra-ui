@@ -12,6 +12,7 @@
       <v-spacer></v-spacer>
 
       <v-btn
+        v-if="write_perm"
         class="mx-1"
         fab
         dark
@@ -36,6 +37,7 @@
         </v-icon>
       </v-btn>
       <v-btn
+        v-if="write_perm"
         class="mx-1"
         fab
         dark
@@ -66,7 +68,7 @@ export default {
   },
 
   data: () => ({
-    //
+    write_perm: document.cookie.split(';').map(function(x) { return x.split('=') }).filter(function(y) { return y[0].trim() == 'hx-perms' })[0][1].trim().indexOf('kondo-editor') > -1
   }),
 };
 </script>

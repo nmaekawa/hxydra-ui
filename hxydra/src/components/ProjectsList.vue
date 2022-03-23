@@ -47,24 +47,28 @@
         </v-btn>
         <v-spacer/>
         <v-btn
+          v-if="write_perm"
           class="mr-3"
           @click="createNewSequence(rowItem)"
         >
           New Sequence
         </v-btn>
         <v-btn
+          v-if="write_perm"
           class="mr-3"
           @click="createNewVersion(rowItem)"
         >
           New Version
         </v-btn>
         <v-btn
+          v-if="write_perm"
           class="mr-3"
           @click="createNewRerun(rowItem)"
         >
           New Run
         </v-btn>
         <v-btn
+          v-if="write_perm"
           @click="deleteItem(rowItem)"
         >
           <v-icon
@@ -122,7 +126,7 @@
             <td>
               <v-container>
                 <v-row>
-                  <v-col class="col-6">
+                  <v-col v-if="write_perm" class="col-6">
                     <v-icon
                       small
                       class="mr-2"
@@ -212,6 +216,7 @@
       rowItem: undefined,
       errorMessage: "",
       errorBox: false,
+      write_perm: document.cookie.split(';').map(function(x) { return x.split('=') }).filter(function(y) { return y[0].trim() == 'hx-perms' })[0][1].trim().indexOf('kondo-editor') > -1,
       debugDialog: false,
       headers: [{
         text: 'Nickname',
