@@ -1,7 +1,6 @@
 module.exports = {
   publicPath: process.env.VUE_APP_STATIC_URL,
   assetsDir: 'static/kondo',
-  outputDir: 'static/kondo',
   transpileDependencies: [
     'vuetify'
   ],
