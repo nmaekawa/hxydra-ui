@@ -59,7 +59,19 @@
 
 <script>
 import ProjectsList from '../../components/ProjectsList';
-
+let perms = false
+try {
+  const cookie = document.cookie
+  if (typeof(cookie) !== "undefined") {
+    let cookie_split = cookie.split(';').map(x => x.split('='))
+    let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
+    if (perm_cookie_val.length > 0) {
+      perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
+    }
+  }
+} catch {
+  perms = false
+}
 export default {
   name: 'App',
 
@@ -68,7 +80,7 @@ export default {
   },
 
   data: () => ({
-    write_perm: document.cookie.split(';').map(function(x) { return x.split('=') }).filter(function(y) { return y[0].trim() == 'hx-perms' })[0][1].trim().indexOf('kondo-editor') > -1
+    write_perm: perms
   }),
 };
 </script>

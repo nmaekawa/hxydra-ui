@@ -1,38 +1,40 @@
 module.exports = {
   publicPath: process.env.VUE_APP_STATIC_URL,
+  assetsDir: 'static/kondo',
+  outputDir: 'static/kondo',
   transpileDependencies: [
     'vuetify'
   ],
   pages: {
-    'index': {
+    'kondo_index': {
       entry: './src/main.js',
-      template: 'public/login.html',
+      template: 'public/kondo_login.html',
       title: 'Login',
-      chunks: ['chunk-vendors', 'chunk-common', 'index']
+      chunks: ['chunk-vendors', 'chunk-common', 'kondo_index']
     },
-    'projects': {
-      entry: './src/pages/projects/main.js',
-      template: 'public/projects.html',
+    'kondo_projects': {
+      entry: './src/pages/kondo_projects/main.js',
+      template: 'public/kondo_projects.html',
       title: 'Projects',
-      chunks: ['chunk-vendors', 'chunk-common', 'projects']
+      chunks: ['chunk-vendors', 'chunk-common', 'kondo_projects']
     },
-    'create': {
-      entry: './src/pages/create/main.js',
-      template: 'public/create.html',
+    'kondo_create': {
+      entry: './src/pages/kondo_create/main.js',
+      template: 'public/kondo_create.html',
       title: 'Create Course',
-      chunks: ['chunk-vendors', 'chunk-common', 'create']
+      chunks: ['chunk-vendors', 'chunk-common', 'kondo_create']
     },
-    'choice': {
-      entry: './src/pages/choice/main.js',
-      template: 'public/choice.html',
+    'kondo_choice': {
+      entry: './src/pages/kondo_choice/main.js',
+      template: 'public/kondo_choice.html',
       title: 'Configure Choice Lists',
-      chunks: ['chunk-vendors', 'chunk-common', 'choice']
+      chunks: ['chunk-vendors', 'chunk-common', 'kondo_choice']
     },
-    'reportlist': {
-      entry: './src/pages/reportlist/main.js',
-      template: 'public/reportlist.html',
+    'kondo_reportlist': {
+      entry: './src/pages/kondo_reportlist/main.js',
+      template: 'public/kondo_reportlist.html',
       title: 'Reports List',
-      chunks: ['chunk-vendors', 'chunk-common', 'reportlist']
+      chunks: ['chunk-vendors', 'chunk-common', 'kondo_reportlist']
     }
   }
 }
