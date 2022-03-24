@@ -6,7 +6,7 @@
       dark
     >
       <div class="d-flex align-center">
-        <v-btn class="text-h4 font-weight-bold text-none" text href="/projects/">Kondo</v-btn><span class="text-h7">Create New Project</span>
+        <v-btn class="text-h4 font-weight-bold text-none" text href="/kondo_projects/">Kondo</v-btn><span class="text-h7">Create New Project</span>
       </div>
       <v-spacer></v-spacer>
 
@@ -15,7 +15,7 @@
         fab
         dark
         small
-        href="/projects"
+        href="/kondo_projects"
         color="#483682 accent"
       >
         <v-icon>
