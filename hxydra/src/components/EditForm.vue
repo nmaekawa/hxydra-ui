@@ -882,7 +882,7 @@
         }
 
         this.$http.put(
-            'https://devo2.hxydra.hxtech.org/v1/kondo/project/' + this.course.nickname + '/',
+            process.env.VUE_APP_KONDO_API_URL + 'project/' + this.course.nickname + '/',
             options
           ).then(() => {
             this.$emit('closeEdit', this.course)
