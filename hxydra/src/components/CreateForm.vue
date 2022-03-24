@@ -207,7 +207,7 @@
         </v-col>
         <v-col>
           <v-btn
-            href="/projects"
+            href="/kondo_projects"
           >Cancel</v-btn>
         </v-col>
       </v-row>
@@ -297,7 +297,7 @@
             this.api_url,
             options
           )
-            .then(() => window.location.href = window.location.protocol + '//' + window.location.host + '/projects/')
+            .then(() => window.location.href = window.location.protocol + '//' + window.location.host + '/kondo_projects/')
             .catch(function(e) {
               self.errorBox = true
               let mess = `(${e.response.status}) ${e.response.statusText}`

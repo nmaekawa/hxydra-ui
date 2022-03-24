@@ -17,7 +17,7 @@
         fab
         dark
         small
-        href="/create"
+        href="/kondo_create"
         color="#483682 accent"
       >
         <v-icon>
@@ -29,7 +29,7 @@
         fab
         dark
         small
-        href="/reportlist/"
+        href="/kondo_reportlist/"
         color="#483682 accent"
       >
         <v-icon>
@@ -42,7 +42,7 @@
         fab
         dark
         small
-        href="/choice/"
+        href="/kondo_choice/"
         color="#483682 accent"
       >
         <v-icon>

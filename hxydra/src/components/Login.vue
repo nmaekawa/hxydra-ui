@@ -50,7 +50,7 @@
                      </v-card-text>
                      <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="#483682" href="/projects" dark>Login</v-btn>
+                        <v-btn color="#483682" href="/kondo_projects" dark>Login</v-btn>
                      </v-card-actions>
                   </v-card>
         </v-form>
