@@ -1,11 +1,23 @@
 <template>
   <v-container id="edit-form">
+    <v-toolbar style="position: sticky; top: 0; z-index: 99999; overflow-y: scroll; padding: 5px; height: 33%" v-if="show_messages" :class="Object.keys(error_messages).length > 0 ? 'red accent-1' : 'green accent-1'">
+      <v-row>
+      <v-col v-if="Object.keys(error_messages).length > 0">
+        <span class="text-h6">Errors({{Object.keys(error_messages).length}}):</span>
+        <ul>
+          <li v-for="(value, propertyName) in error_messages" v-bind:key="propertyName">
+            {{propertyName}} : {{value}}
+          </li>
+        </ul>
+      </v-col>
+      </v-row>
+    </v-toolbar>
     <v-snackbar
       v-model="errorBox"
       data-testid="errorBox"
       centered
     >
-      {{ errorMessage }}
+      <div>{{ errorMessage }}</div>
       <template v-slot:action="{ attrs }">
         <v-btn
           color="white"
@@ -665,7 +677,7 @@
       color="primary"
       @click="saveChanges"
     >Update</v-btn></v-col>
-    <v-col class="col-6 d-flex justify-center"><v-btn @click="closeEdit">Cancel</v-btn></v-col>
+    <v-col class="col-6 d-flex justify-center"><v-btn @click="closeEdit">Discard Changes</v-btn></v-col>
     </v-toolbar>
   </v-container>
 </template>
@@ -714,6 +726,9 @@
       marketingDatePop: false,
       quickfilledx: '',
       quickfillhbso: '',
+      show_messages: false,
+      error_messages: [],
+      db_errors: [],
       teamHeaders: [{
         text: 'Name',
         sortable: true,
@@ -857,6 +872,9 @@
         this.$emit('closeEdit', false)
       },
       saveChanges () {
+        if (!this.validate()) {
+          return
+        }
         let self = this;
         let options = JSON.parse(JSON.stringify(this.course))
         if (options.fuzzy_launch_date && options.fuzzy_launch_date.length > 0) {
@@ -888,19 +906,20 @@
             this.$emit('closeEdit', this.course)
           }).catch(e => {
             self.errorBox = true
-              let mess = `(${e.response.status}) ${e.response.statusText}`
+            self.db_errors = e.response.data.message
+              let mess = `(${e.response.status}) ${e.response.statusText} ${e.response.data.message}`
               switch(e.response.status) {
                 case 400:
-                  self.errorMessage = mess + ` - Missing/Invalid Parameter`
+                  self.errorMessage = mess + ` [Missing/Invalid Parameter]`
                   break
                 case 409:
-                  self.errorMessage = mess + ` - Nickname already exists`
+                  self.errorMessage = mess + ` [Nickname already exists]`
                   break
                 case 401:
-                  self.errorMessage = mess + ` - Log in required`
+                  self.errorMessage = mess + ` [Log in required]`
                   break
                 case 403:
-                  self.errorMessage = mess + ` - Requires Permission`
+                  self.errorMessage = mess + ` [Requires Permission]`
                   break
                 default:
                   self.errorMessage = mess
@@ -952,6 +971,26 @@
         // console.log(this.filteredPlatformDiscipline)
         // this.course.platform_discipline = current_disciplines.map(e => e.text)
         // this.course.technical_platform = this.course.delivery_platform
+      },
+      validate () {
+        console.log("SHOULD VALIDATE")
+        const valid_message = this.$refs.editform.validate()
+        if (!valid_message) {
+          this.show_messages = true
+          const errors = {};
+          this.$refs.editform.inputs.forEach(e => {
+              if (e.errorBucket && e.errorBucket.length) {
+                errors[e.label] = e.errorBucket;
+              }
+            },
+          );
+          console.log(errors)
+          this.error_messages = errors
+        } else {
+          this.show_messages = false
+        }
+
+        return this.$refs.editform.validate()
       },
       addTeam() {
         let personItem = this.full_people.filter(e => (e.first_name + " " + e.last_name) == this.addPerson)[0]
@@ -1069,7 +1108,7 @@
       },
       posIntRules () {
         const rules = []
-        const ruleMin = v => v > 0 || 'Cannot be zero or negative'
+        const ruleMin = v => v >= 0 || 'Must be at least 0'
         rules.push(ruleMin)
         return rules
       },
