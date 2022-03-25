@@ -333,6 +333,9 @@ try {
           })
       },
       async createNewSequence (item) {
+        if (!confirm("Are you sure you want to create a new sequence?")) {
+          return
+        }
         const self = this;
         await self.$http.post(
           self.api_copy_project_url + 'sequence/' + item.nickname + '/'
@@ -354,6 +357,9 @@ try {
           })
       },
       async createNewVersion (item) {
+        if (!confirm("Are you sure you want to create a new version?")) {
+          return
+        }
         const self = this;
         await this.$http.post(
           self.api_copy_project_url + 'version/' + item.nickname + '/'
@@ -375,6 +381,9 @@ try {
           })
       },
       async createNewRerun (item) {
+        if (!confirm("Are you sure you want to create a new rerun?")) {
+          return
+        }
         const self = this;
         await this.$http.post(
           self.api_copy_project_url + 'run/' + item.nickname + '/'
