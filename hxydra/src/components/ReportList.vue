@@ -43,7 +43,7 @@
     },
     data: () => ({
       reports: [],
-      api_domain: process.env.VUE_APP_KONDO_API_DOMAIN,
+      api_domain: process.env.VUE_APP_KONDO_DOMAIN,
       api_url: process.env.VUE_APP_KONDO_API_URL + 'report/',
       errorBox: false,
       errorMessage: '',
