@@ -315,6 +315,9 @@ try {
           .then(() => this.editing = false)
       },
       async deleteItem (item) {
+        if (!confirm("Are you sure you want to delete?")) {
+          return
+        }
         const self = this;
         await self.$http.delete(
           self.api_projects_url + item.nickname
