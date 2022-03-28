@@ -3,7 +3,7 @@
     <v-expansion-panels>
       <v-expansion-panel v-for="item in setup_options" v-bind:key="item.tech_name">
         <v-expansion-panel-header>
-          {{item.proper_name}} <v-spacer/><v-btn :title="'Add new' + item.proper_name" max-width="30px" @click="add = !add; choiceSelected = item.tech_name" class="mr-10"><v-icon>mdi-plus</v-icon></v-btn>
+          {{item.proper_name}} <v-spacer/><v-btn @click.stop="" :title="'Add new' + item.proper_name" max-width="30px" @click="add = !add; choiceSelected = item.tech_name" class="mr-10"><v-icon>mdi-plus</v-icon></v-btn>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-list-item v-for="e in values[item.tech_name]" v-bind:key="e.value">
