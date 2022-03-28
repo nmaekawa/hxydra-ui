@@ -410,6 +410,7 @@ try {
           let indexFound = this.projects.findIndex(obj => obj.nickname === e.nickname)
           if (indexFound == -1) {
             this.projects.push(e)
+            this.projects.sort((firstItem, secondItem) => firstItem.nickname < secondItem.nickname ? -1 : 1)  
           } else {
             this.$set(this.projects, indexFound, e)
           }
