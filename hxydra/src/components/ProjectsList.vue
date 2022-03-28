@@ -81,6 +81,19 @@
         <DetailView :course="selected"/>
       </v-card>
     </v-dialog>
+    <v-card
+      shaped
+      dark
+      class="mb-5 success"
+      v-if="newProject"
+      style="position: sticky; top: 70px; z-index:99999"
+    >
+    <v-card-title>
+      New Project '{{newProject.title}}' was added. &nbsp; <a @click="search=newProject.nickname">View it here</a>
+      <v-spacer></v-spacer>
+      <v-btn @click="newProject=undefined">Close</v-btn>
+    </v-card-title>
+    </v-card>
     <v-card>
       <v-card-title>
         Projects
@@ -231,6 +244,7 @@ try {
       errorBox: false,
       write_perm: perms,
       debugDialog: false,
+      newProject: undefined,
       headers: [{
         text: 'Nickname',
         sortable: true,
@@ -410,7 +424,8 @@ try {
           let indexFound = this.projects.findIndex(obj => obj.nickname === e.nickname)
           if (indexFound == -1) {
             this.projects.push(e)
-            this.projects.sort((firstItem, secondItem) => firstItem.nickname < secondItem.nickname ? -1 : 1)  
+            this.projects.sort((firstItem, secondItem) => firstItem.nickname < secondItem.nickname ? -1 : 1)
+            this.newProject = e
           } else {
             this.$set(this.projects, indexFound, e)
           }
