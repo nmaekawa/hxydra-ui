@@ -27,7 +27,7 @@
     <v-expansion-panels>
       <v-expansion-panel>
         <v-expansion-panel-header>
-          People <v-spacer/><v-btn title="Add new" max-width="30px" @click="addPeople = true;" class="mr-10"><v-icon>mdi-plus</v-icon></v-btn>
+          People <v-spacer/><v-btn @click.stop="" title="Add new" max-width="30px" @click="addPeople = true;" class="mr-10"><v-icon>mdi-plus</v-icon></v-btn>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-data-table
@@ -375,6 +375,7 @@
               })
 
             }
+            chosen.sort((firstItem, secondItem) => firstItem.value.toLowerCase() < secondItem.value.toLowerCase() ? -1 : 1)
             this.add = false
             this.newChoice = ''
             this.newPar = ''
@@ -393,8 +394,8 @@
           let person = {
             'first_name': this.newFirstName,
             'last_name': this.newLastName,
-            'email': this.newEmail.split(','),
-            'affiliation': this.newAffiliation.split(',')
+            'email': this.newEmail.length == 0 ? [] : this.newEmail.split(','),
+            'affiliation': this.newAffiliation.length == 0 ? [] : this.newAffiliation.split(',')
           }
           console.log("Add", person)
           this.$http.post(
@@ -402,6 +403,7 @@
             person
           )
           this.people.push(person)
+          this.people.sort((firstItem, secondItem) => firstItem.last_name.toLowerCase() < secondItem.last_name.toLowerCase() ? -1 : 1)
           this.addPeople = false
           this.choiceSelected = ''
           this.newFirstName = ''
@@ -434,6 +436,7 @@
             person
           ).then(() => {
             this.finishEditing()
+            this.people.sort((firstItem, secondItem) => firstItem.last_name.toLowerCase() < secondItem.last_name.toLowerCase() ? -1 : 1)
           })
         this.isEditingPerson = false
       },
@@ -446,8 +449,8 @@
             foundIndex = k
             person.first_name = this.newFirstName,
             person.last_name = this.newLastName,
-            person.email = this.newEmail.split(',')
-            person.affiliation = this.newAffiliation.split(',')
+            person.email = this.newEmail.length == 0 ? [] : this.newEmail.split(',')
+            person.affiliation = this.newAffiliation.length == 0 ? [] : this.newAffiliation.split(',')
             found = person
           }
         }
@@ -517,6 +520,7 @@
               }
               return e
             })
+            newChoices.sort((firstItem, secondItem) => firstItem.value.toLowerCase() < secondItem.value.toLowerCase() ? -1 : 1)
             this.values[this.choiceSelected] = newChoices
             this.add = false
             this.isEditingChoice = false
