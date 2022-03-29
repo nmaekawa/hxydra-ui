@@ -295,6 +295,27 @@ try {
         )
           .then(data => {
             self.projects = data.data
+
+            // from https://stackoverflow.com/questions/35914069/how-can-i-get-query-parameters-from-a-url-in-vue-js
+            let uri = window.location.href.split('?');
+            if(uri.length == 2) {
+              let vars = uri[1].split('&');
+              let getVars = {};
+              let tmp = '';
+              vars.forEach(function(v) {
+                tmp = v.split('=');
+                if(tmp.length == 2)
+                  getVars[tmp[0]] = tmp[1];
+              });
+
+              if ('course_created' in getVars) {
+                let found_course = self.projects.filter(v => v.nickname == getVars['course_created'])
+                if (found_course.length == 1) {
+                  self.newProject = found_course[0]
+                }
+              }
+            }
+
           })
           .catch(function(e) {
             self.errorBox = true

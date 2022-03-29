@@ -297,7 +297,7 @@
             this.api_url,
             options
           )
-            .then(() => window.location.href = window.location.protocol + '//' + window.location.host + '/kondo_projects/')
+            .then(() => window.location.href = window.location.protocol + '//' + window.location.host + '/kondo_projects/?course_created=' +options.nickname)
             .catch(function(e) {
               self.errorBox = true
               let mess = `(${e.response.status}) ${e.response.statusText}`
