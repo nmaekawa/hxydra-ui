@@ -1088,7 +1088,7 @@
       },
       dateAfterRule () {
         const rules = []
-        const ruleDateInput = v => (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
+        const ruleDateInput = v => !v || (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
         const ruleAddEnd = v => !v || (v && (this.course.end_date !== null) && (this.course.end_date !== undefined) && (this.course.end_date !== '')) || 'Must add end date'
         const ruleAft = v => !v || v <= this.getDate(this.course.end_date) || 'Date should not be after End Date'
         rules.push(ruleDateInput)
@@ -1098,7 +1098,7 @@
       },
       dateBeforeRule () {
         const rules = []
-        const ruleDateInput = v => (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
+        const ruleDateInput = v => !v || (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
         const ruleAddLaunch = v => !v || (v && (this.course.launch_date !== null) && (this.course.launch_date !== undefined) && (this.course.launch_date !== '')) || 'Must add launch date'
         const ruleBef = v => !v || v >= this.getDate(this.course.launch_date) || 'Date should not be before Launch Date'
         rules.push(ruleDateInput)
