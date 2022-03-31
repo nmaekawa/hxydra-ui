@@ -20,7 +20,7 @@ describe('Login.vue', () => {
   })
 
   it('loaded Welcome message', () => {
-    screen.getByText("Welcome to Hxydra", {exact: false})
+    screen.getByText("Welcome to Kondo", {exact: false})
   })
 
   it('loaded username/pw fields', () => {

@@ -37,7 +37,7 @@
             <v-text-field
               v-model="sequence_num"
               label="Sequence Number"
-              :rules="posIntRules"
+              :rules="sequenceRules"
               hint="Still required for standalone courses"
               type="number"
               :disabled="!add_seq"
@@ -372,6 +372,14 @@
       posIntRules () {
         const rules = []
         const ruleMin = v => v > -1 || 'Cannot be negative'
+        rules.push(ruleMin)
+        return rules
+      },
+      sequenceRules() {
+        const rules = []
+        const nonZero = v => v && v != 0 || 'Sequence must start at 1'
+        const ruleMin = v => v && v > -1 || 'Cannot be negative'
+        rules.push(nonZero)
         rules.push(ruleMin)
         return rules
       },
