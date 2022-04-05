@@ -246,7 +246,6 @@
       run: 0,
       sequence_num: 1,
       revenue_school: 'string',
-      types: [],
       launchDatePop: false,
       endDatePop: false,
       add_seq: false,
@@ -256,9 +255,6 @@
       api_url: process.env.VUE_APP_KONDO_API_URL + "project/"
     }),
     methods: {
-      getTypes () {
-        this.types = ['course', 'modules']
-      },
       preventBackspace (event) {
         if (event.keyCode == 8) {
           event.preventDefault()
@@ -321,22 +317,18 @@
         }
       },
       validate () {
-        console.log(this.$refs.createform.validate())
         return this.$refs.createform.validate()
       }
     },
-    mounted() {
-      this.getTypes()
-    },
     computed: {
       launchDateDisplay() {
-        if (this.$refs.createform) {
+        if (this.$refs && this.$refs.createform) {
           this.$refs.createform.validate()
         }
         return this.launch_date
       },
       endDateDisplay() {
-        if (this.$refs.createform) {
+        if (this.$refs && this.$refs.createform) {
           this.$refs.createform.validate()
         }
         return this.end_date

@@ -64,4 +64,32 @@ describe('CreateForm.vue', () => {
     await Vue.nextTick()
     // to finish up later
   })
+
+  it('checks the dates are set properly', async () => {
+    const localThis = {
+      end_date: '2022-03-31',
+      launch_date: '2022-02-28'
+    }
+    expect(CreateForm.computed.endDateDisplay.call(localThis)).toBe('2022-03-31')
+    expect(CreateForm.computed.launchDateDisplay.call(localThis)).toBe('2022-02-28')
+  })
+
+  it('checks the nickname parts are set properly', async () => {
+    const localThis = {
+      prefix: 'TEST1',
+      sequence_num: 1,
+      version: 1,
+      run: 0
+    }
+    expect(CreateForm.computed.nickname.call(localThis)).toBe('TEST1_01_v1_r00')
+
+    const highNums = {
+      prefix: 'TEST2',
+      sequence_num: 15,
+      version: 11,
+      run: 10
+    }
+    expect(CreateForm.computed.nickname.call(highNums)).toBe('TEST2_15_v11_r10')
+  })
+
 })

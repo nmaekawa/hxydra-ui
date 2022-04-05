@@ -70,7 +70,14 @@
       "vue"
     ],
     "collectCoverage": true,
-    "collectCoverageFrom": ["**/*.{js,vue}", "!**/node_modules/**", "!**/dist/**", "!**/coverage/**", "!**/*.config.js", "!**/plugins/**"],
+    "collectCoverageFrom": [
+      "**/*.{js,vue}",
+      "!**/node_modules/**",
+      "!**/dist/**",
+      "!**/coverage/**",
+      "!**/*.config.js",
+      "!**/plugins/**"
+    ],
     "transform": {
       "^.+\\.js$": "babel-jest",
       ".*\\.(vue)$": "vue-jest"
