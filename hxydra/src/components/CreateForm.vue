@@ -109,17 +109,20 @@
                   <v-text-field
                     label="Exact Launch Date"
                     prepend-icon="mdi-calendar-month"
-                    :value="launchDateDisplay"
+                    v-model="launch_date"
                     v-on="on"
                     persistent-hint
                     :disabled="approx_date.length > 0"
                     clearable
                     :rules="dateAfterRule"
                     @click:clear="launch_date = ''"
+                    v-on:keydown="preventNonNums"
+                    @change="validate"
                   >
                   </v-text-field>
                 </template>
                 <v-date-picker
+                  autofocus
                   v-model="launch_date"
                   no-title
                   @change="launchDatePop = false"
@@ -142,14 +145,15 @@
                   <v-text-field
                     label="Exact End Date"
                     prepend-icon="mdi-calendar-month"
-                    :value="end_date"
+                    v-model="end_date"
                     v-on="on"
                     persistent-hint
                     :disabled="approx_date.length > 0"
                     clearable
                     @click:clear="end_date = ''"
                     :rules="dateBeforeRule"
-                    v-on:keydown="preventBackspace"
+                    v-on:keydown="preventNonNums"
+                    @change="validate"
                   >
                   </v-text-field>
                 </template>
@@ -203,10 +207,12 @@
             color="#483682"
             dark
             @click="createProject"
+            tabindex="0"
           >Create</v-btn>
         </v-col>
         <v-col>
           <v-btn
+            tabindex="0"
             href="/kondo_projects"
           >Cancel</v-btn>
         </v-col>
@@ -255,11 +261,8 @@
       api_url: process.env.VUE_APP_KONDO_API_URL + "project/"
     }),
     methods: {
-      preventBackspace (event) {
-        if (event.keyCode == 8) {
-          event.preventDefault()
-        }
-        if (event.keyCode == 46) {
+      preventNonNums (event) {
+        if ('0123456789-'.indexOf(event.key) == -1 &&event.key != 'Tab' && event.key != 'Ctrl' && event.key != 'Alt' && event.key != 'Shift' && event.key != 'Backspace' && event.key != 'Delete') {
           event.preventDefault()
         }
       },
@@ -321,18 +324,6 @@
       }
     },
     computed: {
-      launchDateDisplay() {
-        if (this.$refs && this.$refs.createform) {
-          this.$refs.createform.validate()
-        }
-        return this.launch_date
-      },
-      endDateDisplay() {
-        if (this.$refs && this.$refs.createform) {
-          this.$refs.createform.validate()
-        }
-        return this.end_date
-      },
       nickname() {
         let sequence_val = "_" + this.sequence_num.toString().padStart(2, '0')
         return this.prefix + sequence_val + "_v" + this.version + "_r" + this.run.toString().padStart(2, '0')
