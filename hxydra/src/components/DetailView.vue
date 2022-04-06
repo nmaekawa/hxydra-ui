@@ -50,7 +50,7 @@
           
           <v-row>
             <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
-              Status
+              Status:
             </v-col>
             <v-col class="col-lg-8 col-md-9 col-sm-10 col-9">
               {{course.status}}

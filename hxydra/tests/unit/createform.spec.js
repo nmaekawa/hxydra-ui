@@ -65,15 +65,6 @@ describe('CreateForm.vue', () => {
     // to finish up later
   })
 
-  it('checks the dates are set properly', async () => {
-    const localThis = {
-      end_date: '2022-03-31',
-      launch_date: '2022-02-28'
-    }
-    expect(CreateForm.computed.endDateDisplay.call(localThis)).toBe('2022-03-31')
-    expect(CreateForm.computed.launchDateDisplay.call(localThis)).toBe('2022-02-28')
-  })
-
   it('checks the nickname parts are set properly', async () => {
     const localThis = {
       prefix: 'TEST1',
@@ -92,4 +83,20 @@ describe('CreateForm.vue', () => {
     expect(CreateForm.computed.nickname.call(highNums)).toBe('TEST2_15_v11_r10')
   })
 
+  it('check successful create', async () => {
+    // TODO: check how to test this via external API
+    
+    // let prefix = screen.getByLabelText('Project Prefix')
+    // let cno = screen.getByLabelText('Part of a sequence?')
+    // await fireEvent.click(cno)
+    // let sno = screen.getByLabelText('Sequence Number')
+    // await fireEvent.update(prefix, 'AUTO1')
+    // await fireEvent.update(sno, 1)
+    // let prna = screen.getByLabelText('Project Name')
+    // await fireEvent.update(prna, 'Test Auto')
+    // let apda = screen.getByLabelText('Approximate Launch & End Date')
+    // await fireEvent.update(apda, 'Soon')
+    // let submit_button = screen.getByText('Create')
+    // await fireEvent.click(submit_button)
+  })
 })
