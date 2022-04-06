@@ -61,6 +61,9 @@
     methods: {
       async getReports () {
         const self = this
+        if (!self.$http) {
+          return
+        }
         await this.$http.get(
           self.api_url
         )

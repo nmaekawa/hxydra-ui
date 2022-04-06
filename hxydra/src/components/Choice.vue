@@ -326,6 +326,9 @@
     }),
     methods: {
       getChoices () {
+        if (!this.$http) {
+          return {}
+        }
         // TODO: Try to get all these list values in one go
         for (const s of this.setup_options) {
           this.$http.get(this.api_url_prefix +s['tech_name']+'/')
@@ -357,6 +360,9 @@
         if ('par' in choice) {
           options[choice.par] = this.newPar
           hasPar = true
+        }
+        if (!this.$http) {
+          return
         }
         this.$http.post(
           this.api_url_prefix + this.choiceSelected+'/',
@@ -538,6 +544,9 @@
       },
       async getPeople () {
         //eventually this should call a new API call that gets the full list of people
+        if (!this.$http) {
+          return
+        }
         await this.$http.get(
           this.people_api_url
         ).then(data => {

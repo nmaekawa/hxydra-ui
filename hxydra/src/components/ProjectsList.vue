@@ -290,6 +290,9 @@ try {
       },
       async getProjects () {
         const self = this
+        if (!self.$http) {
+          return
+        }
         await this.$http.get(
           self.api_projects_url
         )
@@ -326,6 +329,9 @@ try {
       },
       async getItemDetail ( item ) {
         const self = this
+        if (!this.$http) {
+          return
+        }
         await this.$http.get(
           self.api_projects_url + item.nickname
           + '/'
@@ -354,6 +360,9 @@ try {
           return
         }
         const self = this;
+        if (!self.$http) {
+          return
+        }
         await self.$http.delete(
           self.api_projects_url + item.nickname
           + '/'
@@ -372,6 +381,9 @@ try {
           return
         }
         const self = this;
+        if (!self.$http) {
+          return
+        }
         await self.$http.post(
           self.api_copy_project_url + 'sequence/' + item.nickname + '/'
         )
@@ -396,6 +408,9 @@ try {
           return
         }
         const self = this;
+        if (!this.$http) {
+          return
+        }
         await this.$http.post(
           self.api_copy_project_url + 'version/' + item.nickname + '/'
         )
@@ -420,6 +435,9 @@ try {
           return
         }
         const self = this;
+        if (!this.$http) {
+          return
+        }
         await this.$http.post(
           self.api_copy_project_url + 'run/' + item.nickname + '/'
         )
