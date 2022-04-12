@@ -699,6 +699,7 @@
 </style>
 
 <script>
+  import axios from 'axios'
   export default {
     name: 'EditForm',
     props: {
@@ -818,7 +819,7 @@
       getChoices () {
         // TODO: Try to get all these list values in one go
         for (const s of this.setup_options) {
-          this.$http.get(this.api_url_prefix +s['tech_name']+'/')
+          axios.get(this.api_url_prefix +s['tech_name']+'/')
             .then(e => {
               if ('par' in s){
                 if ('pk' in s) {
@@ -856,7 +857,7 @@
       },
       async getPeople () {
         //eventually this should call a new API call that gets the full list of people
-        const { data } = await this.$http.get(
+        const { data } = await axios.get(
           this.people_api_url
         );
         this.people = data.map(p => (p.first_name + ' ' + p.last_name))
@@ -899,7 +900,7 @@
           options.subactivity = null
         }
 
-        this.$http.put(
+        axios.put(
             process.env.VUE_APP_KONDO_API_URL + 'project/' + this.course.nickname + '/',
             options
           ).then(() => {

@@ -37,6 +37,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     name: 'ReportList',
     components: {
@@ -61,10 +62,10 @@
     methods: {
       async getReports () {
         const self = this
-        if (!self.$http) {
+        if (!axios) {
           return
         }
-        await this.$http.get(
+        await axios.get(
           self.api_url
         )
           .then(data => {

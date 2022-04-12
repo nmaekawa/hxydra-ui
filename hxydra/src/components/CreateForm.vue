@@ -222,8 +222,9 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
-    name: 'EditForm',
+    name: 'CreateForm',
 
     data: () => ({
       prefix: '',
@@ -292,7 +293,7 @@
             fuzzy_launch_date: approx_val
           }
           let self = this
-          this.$http.post(
+          axios.post(
             this.api_url,
             options
           )

@@ -215,19 +215,20 @@
 <script>
   import EditForm from './EditForm'
   import DetailView from './DetailView'
+  import axios from 'axios'
   let perms = false
-try {
-  const cookie = document.cookie
-  if (typeof(cookie) !== "undefined") {
-    let cookie_split = cookie.split(';').map(x => x.split('='))
-    let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
-    if (perm_cookie_val.length > 0) {
-      perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
+  try {
+    const cookie = document.cookie
+    if (typeof(cookie) !== "undefined") {
+      let cookie_split = cookie.split(';').map(x => x.split('='))
+      let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
+      if (perm_cookie_val.length > 0) {
+        perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
+      }
     }
+  } catch {
+    perms = false
   }
-} catch {
-  perms = false
-}
   export default {
     name: 'ProjectsList',
     components: {
@@ -290,10 +291,10 @@ try {
       },
       async getProjects () {
         const self = this
-        if (!self.$http) {
+        if (!axios) {
           return
         }
-        await this.$http.get(
+        await axios.get(
           self.api_projects_url
         )
           .then(data => {
@@ -329,10 +330,10 @@ try {
       },
       async getItemDetail ( item ) {
         const self = this
-        if (!this.$http) {
+        if (!axios) {
           return
         }
-        await this.$http.get(
+        await axios.get(
           self.api_projects_url + item.nickname
           + '/'
         )
@@ -360,10 +361,10 @@ try {
           return
         }
         const self = this;
-        if (!self.$http) {
+        if (!axios) {
           return
         }
-        await self.$http.delete(
+        await axios.delete(
           self.api_projects_url + item.nickname
           + '/'
         )
@@ -381,10 +382,10 @@ try {
           return
         }
         const self = this;
-        if (!self.$http) {
+        if (!axios) {
           return
         }
-        await self.$http.post(
+        await axios.post(
           self.api_copy_project_url + 'sequence/' + item.nickname + '/'
         )
           .then((data) => self.selected = data.data)
@@ -394,7 +395,7 @@ try {
             if (e.response.data.message[0].indexOf('not most recent') > -1) {
               // show pop up
               if(confirm("Project is not most recent instance. Are you sure you want to create new sequence from this older instance?")) {
-                self.$http.post(
+                axios.post(
                   self.api_copy_project_url + 'sequence/' + item.nickname + '/?yis=true'
                 )
               }
@@ -408,10 +409,10 @@ try {
           return
         }
         const self = this;
-        if (!this.$http) {
+        if (!axios) {
           return
         }
-        await this.$http.post(
+        await axios.post(
           self.api_copy_project_url + 'version/' + item.nickname + '/'
         )
           .then((data) => this.selected = data.data)
@@ -421,7 +422,7 @@ try {
             if (e.response.data.message[0].indexOf('not most recent') > -1) {
               // show pop up
               if(confirm("Project is not most recent instance. Are you sure you want to create new version from this older instance?")) {
-                self.$http.post(
+                axios.post(
                   self.api_copy_project_url + 'version/' + item.nickname + '/?yis=true'
                 )
               }
@@ -435,10 +436,10 @@ try {
           return
         }
         const self = this;
-        if (!this.$http) {
+        if (!axios) {
           return
         }
-        await this.$http.post(
+        await axios.post(
           self.api_copy_project_url + 'run/' + item.nickname + '/'
         )
           .then((data) => this.selected = data.data)
@@ -448,7 +449,7 @@ try {
             if (e.response.data.message[0].indexOf('not most recent') > -1) {
               // show pop up
               if(confirm("Project is not most recent run. Are you sure you want to create new run from this older instance?")) {
-                self.$http.post(
+                axios.post(
                   self.api_copy_project_url + 'run/' + item.nickname + '/?yis=true'
                 )
               }

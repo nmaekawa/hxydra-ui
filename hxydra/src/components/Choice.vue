@@ -227,6 +227,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     name: 'Choice',
     props: {
@@ -326,12 +327,12 @@
     }),
     methods: {
       getChoices () {
-        if (!this.$http) {
+        if (!axios) {
           return {}
         }
         // TODO: Try to get all these list values in one go
         for (const s of this.setup_options) {
-          this.$http.get(this.api_url_prefix +s['tech_name']+'/')
+          axios.get(this.api_url_prefix +s['tech_name']+'/')
             .then(e => {
               console.log(e.data)
               if ('par' in s){
@@ -361,10 +362,10 @@
           options[choice.par] = this.newPar
           hasPar = true
         }
-        if (!this.$http) {
+        if (!axios) {
           return
         }
-        this.$http.post(
+        axios.post(
           this.api_url_prefix + this.choiceSelected+'/',
           options
         )
@@ -404,7 +405,7 @@
             'affiliation': this.newAffiliation.length == 0 ? [] : this.newAffiliation.split(',')
           }
           console.log("Add", person)
-          this.$http.post(
+          axios.post(
             this.api_url_prefix +'person/',
             person
           )
@@ -437,7 +438,7 @@
           'email': email_to_send,
           'affiliation': affiliation_to_send
         }
-        this.$http.put(
+        axios.put(
             this.api_url_prefix +'person/' + this.idRef + '/',
             person
           ).then(() => {
@@ -473,7 +474,7 @@
       },
       async deleteChoice() {
         let self = this
-        await this.$http.delete(
+        await axios.delete(
           this.api_url_prefix + this.choiceSelected + '/' + self.awaitingDelete.value.replace(' ', '-') + '/'
         )
           .then(e => {
@@ -507,7 +508,7 @@
           hasPar = true
         }
         let self = this
-        this.$http.put(
+        axios.put(
           this.api_url_prefix + this.choiceSelected+'/'+this.awaitingEdit.value+'/',
           options
         )
@@ -538,16 +539,16 @@
           .catch(e => console.log(e))
       },
       async getListFromAPI () {
-        // return await this.$http.get(
+        // return await axios.get(
         //   apiurl
         // ).then(data => console.log(data.data))
       },
       async getPeople () {
         //eventually this should call a new API call that gets the full list of people
-        if (!this.$http) {
+        if (!axios) {
           return
         }
-        await this.$http.get(
+        await axios.get(
           this.people_api_url
         ).then(data => {
           this.people = data.data
@@ -575,19 +576,16 @@
       },
       schoolCheck () {
         const rules = []
-        let schools = this.school
         const checkSchool = school_str => {
+          let schools = this.school
           let allFound = true
-          console.log(school_str, typeof(school_str))
-          if (school_str) { return true }
           let school_list = school_str.split(',')
           school_list.forEach(s => {
             let found = false
             schools.forEach(sch => {
-              if (s.trim() == sch.value) {found = true}
+              if (s.trim() == sch.name) {found = true}
             })
             if (!found) {allFound = false}
-            console.log(s, found, allFound)
           })
           return allFound
         }
