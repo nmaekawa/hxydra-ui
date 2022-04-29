@@ -334,7 +334,6 @@
         for (const s of this.setup_options) {
           axios.get(this.api_url_prefix +s['tech_name']+'/')
             .then(e => {
-              console.log(e.data)
               if ('par' in s){
                 this[s['tech_name']] = e.data.map(function(f) {
                   return {

@@ -2,8 +2,22 @@ import { render, screen, fireEvent, getByLabelText } from '@testing-library/vue'
 import CreateForm from '@/components/CreateForm.vue'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
+import axios from 'axios'
 
 Vue.use(Vuetify)
+
+jest.mock('axios')
+
+axios.post.mockImplementation((url) => {
+  console.log(url)
+  switch (url) {
+    case 'https://devo2.hxydra.hxtech.org/kondo/v1/enrollmenttype/':
+      return Promise.resolve({data: [{"name":"audit"},{"name":"flipped"},{"name":"limited"},{"name":"open"},{"name":"other"},{"name":"spoc"}]})
+    default:
+      console.log('Error', url)
+      return Promise.reject(new Error('not found'))
+  }
+})
 
 describe('CreateForm.vue', () => {
   let wrapper
@@ -98,5 +112,7 @@ describe('CreateForm.vue', () => {
     // await fireEvent.update(apda, 'Soon')
     // let submit_button = screen.getByText('Create')
     // await fireEvent.click(submit_button)
+    
+
   })
 })
