@@ -1,5 +1,23 @@
 <template>
   <v-container>
+    <v-snackbar
+      v-model="errorBox"
+      top
+      elevation="10"
+      color="error"
+    >
+      {{ errorMessage }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="errorBox = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-expansion-panels>
       <v-expansion-panel v-for="item in setup_options" v-bind:key="item.tech_name">
         <v-expansion-panel-header>
@@ -259,6 +277,8 @@
       awaitingDelete: undefined,
       awaitingEdit: undefined,
       people: [],
+      errorBox: false,
+      errorMessage: "",
       headers: [{
         text: 'First Name',
         sortable: true,
@@ -349,7 +369,11 @@
                 })
               }
             })
-            //.then(g => this.values[s['tech_name']] = g)
+            .catch(function(err) {
+              console.log("Error: ", err)
+              self.errorBox = true
+              self.errorMessage = "API could not be reached. Delete did not happen"
+            })
         }
       },
       addChoicePopup () {
@@ -388,7 +412,11 @@
             this.choiceSelected = ''
             console.log(data)
           })
-          .catch(e => console.log(e))
+          .catch(err => {
+            console.log("Error: ", err.response.data.message[0])
+            this.errorBox = true
+            this.errorMessage = "Value was not created. " + err.response.data.message[0] 
+          })
         
       },
       addNewPerson () {
@@ -396,26 +424,30 @@
         if (this.editMode) {
           this.finishEditing()
         } else {
-          console.log(this.newEmail, this.newAffiliation)
           let person = {
             'first_name': this.newFirstName,
             'last_name': this.newLastName,
             'email': this.newEmail.length == 0 ? [] : this.newEmail.split(','),
             'affiliation': this.newAffiliation.length == 0 ? [] : this.newAffiliation.split(',')
           }
-          console.log("Add", person)
           axios.post(
             this.api_url_prefix +'person/',
             person
-          )
-          this.people.push(person)
-          this.people.sort((firstItem, secondItem) => firstItem.last_name.toLowerCase() < secondItem.last_name.toLowerCase() ? -1 : 1)
-          this.addPeople = false
-          this.choiceSelected = ''
-          this.newFirstName = ''
-          this.newLastName = ''
-          this.newEmail = []
-          this.newAffiliation = []
+          ).then(() => {
+            this.people.push(person)
+            this.people.sort((firstItem, secondItem) => firstItem.last_name.toLowerCase() < secondItem.last_name.toLowerCase() ? -1 : 1)
+            this.addPeople = false
+            this.choiceSelected = ''
+            this.newFirstName = ''
+            this.newLastName = ''
+            this.newEmail = []
+            this.newAffiliation = []
+          }).catch(err => {
+            console.log("Error: ", err.response.data.message[0])
+            this.errorBox = true
+            this.errorMessage = "Value was not created. " + err.response.data.message[0]
+          })
+          
         }
       },
       editPerson (person) {
@@ -477,21 +509,24 @@
           this.api_url_prefix + this.choiceSelected + '/' + self.awaitingDelete.value.replace(' ', '-') + '/'
         )
           .then(e => {
-            console.log('Worked', e)
             let cat = this.values[this.choiceSelected]
             cat = cat.filter(e => e.value !== this.awaitingDelete.value)
             this[this.choiceSelected] = cat
             this.values[this.choiceSelected] = cat
             this.choiceSelected = ''
             this.awaitingDelete = ''
+            console.log("Was deleted:", e)
           })
-          .catch(e => console.log('Error', e))
+          .catch(function(err) {
+            console.log("Error: ", err)
+            self.errorBox = true
+            self.errorMessage = "API could not be reached. Delete did not happen"
+          })
       },
       async editChoice() {
         this.add = true
         this.isEditingChoice = true
         let choice = this.setup_options.filter( e => e.tech_name == this.choiceSelected)[0]
-        console.log(choice)
         if ('par' in choice) {
           this.newPar = this.awaitingEdit.par
         }
@@ -535,7 +570,11 @@
             this.choiceSelected = ''
             console.log(data)
           })
-          .catch(e => console.log(e))
+          .catch(function(err) {
+            console.log("Error: ", err)
+            self.errorBox = true
+            self.errorMessage = "API could not be reached. Update did not happen"
+          })
       },
       async getListFromAPI () {
         // return await axios.get(
@@ -578,17 +617,20 @@
         const checkSchool = school_str => {
           let schools = this.school
           let allFound = true
-          let school_list = school_str.split(',')
+          console.log(school_str)
+          let school_list = typeof(school_str) == "string" ? school_str.split(',') : []
+          console.log('2', school_list)
           school_list.forEach(s => {
             let found = false
             schools.forEach(sch => {
-              if (s.trim() == sch.name) {found = true}
+              console.log(sch)
+              if (s.trim() == sch.value) {found = true}
             })
             if (!found) {allFound = false}
           })
           return allFound
         }
-        const schoolVerify = v => !v || checkSchool(v) || 'Affiliation(s) must be a valid school acronym, i.e. HBS, HKS'
+        const schoolVerify = v => !v || (checkSchool(v) && v.indexOf(' ') == -1) || 'Affiliation(s) must be a valid school acronym, i.e. HBS,HKS (No spaces allowed)'
         rules.push(schoolVerify)
         return rules
       },

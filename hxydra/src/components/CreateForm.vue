@@ -78,7 +78,17 @@
           <v-col class="col-12">
             <v-text-field
               v-model="project_title"
-              label="Project Name"
+              label="Project Title"
+              :rules="titleRules"
+              required
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="col-12">
+            <v-text-field
+              v-model="common_project_name"
+              label="Common Name"
               :rules="titleRules"
               required
             ></v-text-field>
@@ -237,6 +247,7 @@
       project_title: 'Example Title',
       course_id: 'string',
       description: 'Example description of the project',
+      common_project_name: 'Example Common Project Name',
       //description_brief: 'string',
       type: 'string',
       //section_count: 'number',
@@ -290,7 +301,8 @@
             end_date: end_date,
             nickname: this.nickname,
             is_fuzzy_launch_date: fuzz,
-            fuzzy_launch_date: approx_val
+            fuzzy_launch_date: approx_val,
+            common_name: this.common_project_name
           }
           let self = this
           axios.post(
