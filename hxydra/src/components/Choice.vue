@@ -617,9 +617,7 @@
         const checkSchool = school_str => {
           let schools = this.school
           let allFound = true
-          console.log(school_str)
           let school_list = typeof(school_str) == "string" ? school_str.split(',') : []
-          console.log('2', school_list)
           school_list.forEach(s => {
             let found = false
             schools.forEach(sch => {
