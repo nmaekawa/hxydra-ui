@@ -367,7 +367,7 @@
                   </v-chip>
                 </v-card-text>
                 <v-card-text>
-                  HX Disciplines (Marketing):
+                  VPAL Disciplines (Marketing):
                   <v-chip v-for="e in course.hx_discipline" v-bind:key="e">
                     {{ e }}
                   </v-chip>

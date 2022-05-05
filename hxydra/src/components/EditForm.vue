@@ -553,7 +553,7 @@
           <v-col class="col-6">
             <v-select
               :items="hxdiscipline"
-              label="HX Disciplines (Marketing)"
+              label="VPAL Disciplines (Marketing)"
               v-model="course.hx_discipline"
               multiple
             >
@@ -774,7 +774,7 @@
         'proper_par_name': 'Platform Name',
         'pk': 'pk'
       }, {
-        'proper_name': 'HX Discipline',
+        'proper_name': 'VPAL Discipline',
         'tech_name': 'hxdiscipline',
         'key': 'name'
       }, {
