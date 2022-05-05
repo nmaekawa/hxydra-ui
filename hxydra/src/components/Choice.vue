@@ -332,8 +332,8 @@
         'par': 'platform',
         'proper_par_name': 'Platform Name'
       }, {
-        'proper_name': 'HX Discipline',
-        'tech_name': 'hxdiscipline',
+        'proper_name': 'VPAL Discipline',
+        'tech_name': 'vpaldiscipline',
         'key': 'name'
       }, {
         'proper_name': 'Project Status',

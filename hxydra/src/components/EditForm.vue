@@ -552,9 +552,9 @@
         <v-row>
           <v-col class="col-6">
             <v-select
-              :items="hxdiscipline"
+              :items="vpaldiscipline"
               label="VPAL Disciplines (Marketing)"
-              v-model="course.hx_discipline"
+              v-model="course.vpal_discipline"
               multiple
             >
             </v-select>
@@ -775,7 +775,7 @@
         'pk': 'pk'
       }, {
         'proper_name': 'VPAL Discipline',
-        'tech_name': 'hxdiscipline',
+        'tech_name': 'vpaldiscipline',
         'key': 'name'
       }, {
         'proper_name': 'Project Status',
@@ -791,7 +791,7 @@
       deliveryplatform: [],
       school: [],
       platformdiscipline: [],
-      hxdiscipline: [],
+      vpaldiscipline: [],
       projectstatus: [],
       api_url_prefix: process.env.VUE_APP_KONDO_API_URL,
       people_api_url: process.env.VUE_APP_KONDO_API_URL + 'person/',
