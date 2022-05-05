@@ -223,6 +223,14 @@
         <v-col>
           <v-btn
             tabindex="0"
+            @click="validate"
+          >
+            Validate
+          </v-btn>
+        </v-col>
+        <v-col>
+          <v-btn
+            tabindex="0"
             href="/kondo_projects"
           >Cancel</v-btn>
         </v-col>
@@ -350,16 +358,20 @@
         const rules = []
         const ruleAddEnd = v => !v || (v && (this.end_date !== null) && (this.end_date !== undefined) && (this.end_date !== '')) || 'Must add end date'
         const ruleAft = v => !v || v <= this.end_date || 'Date should not be after End Date'
+        const ruleMustHaveDate = v => v !== this.approx_date || 'Must have either exact dates or an approximate date.'
         rules.push(ruleAddEnd)
         rules.push(ruleAft)
+        rules.push(ruleMustHaveDate)
         return rules
       },
       dateBeforeRule () {
         const rules = []
         const ruleAddLaunch = v => !v || (v && (this.launch_date !== null) && (this.launch_date !== undefined) && (this.launch_date !== '')) || 'Must add launch date'
         const ruleBef = v => !v || v >= this.launch_date || 'Date should not be before Launch Date'
+        const ruleMustHaveDate = v => v !== this.approx_date || 'Must have either exact dates or an approximate date.'
         rules.push(ruleAddLaunch)
         rules.push(ruleBef)
+        rules.push(ruleMustHaveDate)
         return rules
       },
       posIntRules () {
