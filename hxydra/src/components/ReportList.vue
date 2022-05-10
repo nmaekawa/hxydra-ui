@@ -43,29 +43,114 @@
         stream
       ></v-progress-linear>
     </v-snackbar>
-    <v-card>
+    <v-card
+      elevation="0"
+    >
       <v-card-title>
         Report List
       </v-card-title>
       <v-card-text>If links don't download when clicking: Right click + Download/Save As</v-card-text>
-      <v-list flat>
-        <v-list-item
+      <v-container>
+        <v-row
           v-for="(item, i) in reports"
           :key="i"
         >
-          <h3 style="margin-right:20px;">{{item.description}}</h3>
-          <v-btn
-            @click="downloadUrl(api_domain + item.url + '?format=csv', item.description + '.csv')"
-            style="margin-right:10px"
-          ><v-icon>mdi-download</v-icon> CSV</v-btn>
-          <v-btn
-            @click="downloadUrl(api_domain + item.url + '?format=json', item.description + '.json')"
-          ><v-icon>mdi-download</v-icon> JSON</v-btn>
-        </v-list-item>
-      </v-list>
+          <v-col
+            cols="12"
+            sm="5"
+          >
+            <h3 style="margin-right:20px;">{{item.description}}</h3>
+          </v-col>
+          <v-col
+            cols="4"
+            sm="2"
+            align="center"
+          >
+            <v-btn
+              @click="downloadUrl(api_domain + item.url + '?format=csv', item.description + '.csv')"
+              class="mr-5"
+            ><v-icon>mdi-download</v-icon> CSV</v-btn>
+          </v-col>
+          <v-col
+            cols="4"
+            sm="3"
+            align="center"
+          >
+            <v-btn
+              @click="downloadUrl(api_domain + item.url + '?format=json', item.description + '.json')"
+              class="mr-5"
+            ><v-icon>mdi-download</v-icon> JSON</v-btn>
+          </v-col>
+          <v-col
+            cols="4"
+            sm="2"
+            align="center"
+          >
+            <v-btn
+              @click="viewOnline(api_domain + item.url + '?format=json', item)"
+            ><v-icon class="mr-2">mdi-eye</v-icon> View</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card>
+    <v-card
+      class="mt-10"
+      elevation="10"
+    >
+      <v-card-title class="justify-center">
+        {{ selected_report_title }}
+      </v-card-title>
+        <v-container v-if="loading">
+          <v-row>
+            <v-col align="center">
+              <v-icon class="spin">mdi-reload</v-icon>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col align="center">
+              {{ loadProgress }} %
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-data-table
+          v-if="tableData.length > 0"
+          :headers="tableHeaders"
+          :items="tableData"
+          :items-per-page="25"
+          class="elevation-1"
+          :search="search"
+          :custom-filter="filter"
+        >
+          <template v-slot:top>
+            <v-text-field
+              v-model="search"
+              label="Search"
+              class="mx-4"
+              prepend-inner-icon="mdi-magnify"
+              outlined
+            ></v-text-field>
+          </template>
+        </v-data-table>
     </v-card>
   </v-container>
 </template>
+
+<style>
+  .spin {
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+  @keyframes spin {
+    from {
+      transform:rotate(0deg);
+    }
+    to {
+      transform:rotate(360deg);
+    }
+  }
+</style>
 
 <script>
   import axios from 'axios'
@@ -82,6 +167,12 @@
       errorMessage: '',
       downloadBox: false,
       progressMessage: '',
+      loadProgress: 0,
+      tableHeaders: [],
+      tableData: [],
+      loading: false,
+      selected_report_title: "Select Report Above to View Online",
+      search: '',
       test_reports: [{
         name: 'Courses Launching in 14 Days',
         link: 'https://google.com'
@@ -151,6 +242,55 @@
           this.errorMessage = "API could not be reached. Could not download report."
             console.log(e)
         })
+      },
+      async viewOnline(urlLink, selected_report) {
+        this.selected_report_title = selected_report.description
+        this.loading = true
+        this.loadProgress = "Making Request. It may say 0% for a few minutes... - 0"
+        this.tableData = []
+        this.tableHeaders = []
+        if (!axios) {
+          return
+        }
+
+        await axios.get(
+          urlLink,
+          {
+            onDownloadProgress: progressEvent => {
+              const total = progressEvent.total
+              const current = progressEvent.loaded
+
+              let percentCompleted = Math.floor(current / total * 100)
+              this.loadProgress = percentCompleted
+            }
+          }
+        ).then(res => {
+          let data_found = res.data
+          this.tableHeaders = []
+          if(data_found.length > 0) {
+            let sample_val = data_found[0]
+            for (const key in sample_val) {
+              if (Object.hasOwnProperty.call(sample_val, key)) {
+                this.tableHeaders.push({
+                  text: key.replace('_', ' ').toUpperCase(),
+                  sortable: true,
+                  value: key,
+                  width: "150px"
+                })
+              }
+            }
+          }
+          this.tableData = data_found
+          this.loading = false
+        })
+      },
+      filter (value, search) {
+        if (value && search) {
+          if (typeof(value) !== "undefined") {
+            return value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) > -1
+          }
+        }
+        return false
       }
     },
     mounted() {
