@@ -398,6 +398,9 @@
                 axios.post(
                   self.api_copy_project_url + 'sequence/' + item.nickname + '/?yis=true'
                 )
+                  .then((data) => self.selected = data.data)
+                  .then(() => self.editing = true)
+                  .then(() => self.detail = false)
               }
             } else {
               console.log(e)
@@ -425,6 +428,9 @@
                 axios.post(
                   self.api_copy_project_url + 'version/' + item.nickname + '/?yis=true'
                 )
+                  .then((data) => self.selected = data.data)
+                  .then(() => self.editing = true)
+                  .then(() => self.detail = false)
               }
             } else {
               console.log(e)
@@ -452,6 +458,9 @@
                 axios.post(
                   self.api_copy_project_url + 'run/' + item.nickname + '/?yis=true'
                 )
+                  .then((data) => self.selected = data.data)
+                  .then(() => self.editing = true)
+                  .then(() => self.detail = false)
               }
             } else {
               console.log(e)
