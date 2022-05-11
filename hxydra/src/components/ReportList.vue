@@ -47,9 +47,9 @@
       elevation="0"
     >
       <v-card-title>
-        Report List
+        Report List <v-spacer /> <v-switch :label="cachedLabel" v-model="freshest"></v-switch>
       </v-card-title>
-      <v-card-text>If links don't download when clicking: Right click + Download/Save As</v-card-text>
+      <v-card-text>If links don't download when clicking: Right click + Download/Save As<br>Cached Version is faster, but may be outdated. Latest version may take a few minutes.</v-card-text>
       <v-container>
         <v-row
           v-for="(item, i) in reports"
@@ -67,7 +67,7 @@
             align="center"
           >
             <v-btn
-              @click="downloadUrl(api_domain + item.url + '?format=csv', item.description + '.csv')"
+              @click="downloadUrl(api_domain + item.url + '?format=csv&freshest=' + freshest, item.description + '.csv')"
               class="mr-5"
             ><v-icon>mdi-download</v-icon> CSV</v-btn>
           </v-col>
@@ -77,7 +77,7 @@
             align="center"
           >
             <v-btn
-              @click="downloadUrl(api_domain + item.url + '?format=json', item.description + '.json')"
+              @click="downloadUrl(api_domain + item.url + '?format=json&freshest=' + freshest, item.description + '.json')"
               class="mr-5"
             ><v-icon>mdi-download</v-icon> JSON</v-btn>
           </v-col>
@@ -87,13 +87,13 @@
             align="center"
           >
             <v-btn
-              @click="viewOnline(api_domain + item.url + '?format=json', item)"
+              :href="'/kondo_reportview/?url=' + item.url + '&title=' + item.description + '&freshest=' + freshest"
             ><v-icon class="mr-2">mdi-eye</v-icon> View</v-btn>
           </v-col>
         </v-row>
       </v-container>
     </v-card>
-    <v-card
+    <!-- <v-card
       class="mt-10"
       elevation="10"
     >
@@ -131,7 +131,7 @@
             ></v-text-field>
           </template>
         </v-data-table>
-    </v-card>
+    </v-card> -->
   </v-container>
 </template>
 
@@ -168,6 +168,7 @@
       downloadBox: false,
       progressMessage: '',
       loadProgress: 0,
+      freshest: false,
       tableHeaders: [],
       tableData: [],
       loading: false,
@@ -226,6 +227,7 @@
           }
         ).then(res => {
           this.progressMessage = "Report Downloaded"
+          console.log(res)
           let filename_str = res.headers['content-disposition']
           const re = /filename="(.*)"/
           let filename = filename_str.match(re)[1];
@@ -240,50 +242,50 @@
         }).catch(e => {
           this.errorBox = true
           this.errorMessage = "API could not be reached. Could not download report."
-            console.log(e)
+          console.log(e)
         })
       },
-      async viewOnline(urlLink, selected_report) {
-        this.selected_report_title = selected_report.description
-        this.loading = true
-        this.loadProgress = "Making Request. It may say 0% for a few minutes... - 0"
-        this.tableData = []
-        this.tableHeaders = []
-        if (!axios) {
-          return
-        }
+      // async viewOnline(urlLink, selected_report) {
+      //   this.selected_report_title = selected_report.description
+      //   this.loading = true
+      //   this.loadProgress = "Making Request. It may say 0% for a few minutes... - 0"
+      //   this.tableData = []
+      //   this.tableHeaders = []
+      //   if (!axios) {
+      //     return
+      //   }
 
-        await axios.get(
-          urlLink,
-          {
-            onDownloadProgress: progressEvent => {
-              const total = progressEvent.total
-              const current = progressEvent.loaded
+      //   await axios.get(
+      //     urlLink,
+      //     {
+      //       onDownloadProgress: progressEvent => {
+      //         const total = progressEvent.total
+      //         const current = progressEvent.loaded
 
-              let percentCompleted = Math.floor(current / total * 100)
-              this.loadProgress = percentCompleted
-            }
-          }
-        ).then(res => {
-          let data_found = res.data
-          this.tableHeaders = []
-          if(data_found.length > 0) {
-            let sample_val = data_found[0]
-            for (const key in sample_val) {
-              if (Object.hasOwnProperty.call(sample_val, key)) {
-                this.tableHeaders.push({
-                  text: key.replace('_', ' ').toUpperCase(),
-                  sortable: true,
-                  value: key,
-                  width: "150px"
-                })
-              }
-            }
-          }
-          this.tableData = data_found
-          this.loading = false
-        })
-      },
+      //         let percentCompleted = Math.floor(current / total * 100)
+      //         this.loadProgress = percentCompleted
+      //       }
+      //     }
+      //   ).then(res => {
+      //     let data_found = res.data
+      //     this.tableHeaders = []
+      //     if(data_found.length > 0) {
+      //       let sample_val = data_found[0]
+      //       for (const key in sample_val) {
+      //         if (Object.hasOwnProperty.call(sample_val, key)) {
+      //           this.tableHeaders.push({
+      //             text: key.replace('_', ' ').toUpperCase(),
+      //             sortable: true,
+      //             value: key,
+      //             width: "150px"
+      //           })
+      //         }
+      //       }
+      //     }
+      //     this.tableData = data_found
+      //     this.loading = false
+      //   })
+      // },
       filter (value, search) {
         if (value && search) {
           if (typeof(value) !== "undefined") {
@@ -291,6 +293,11 @@
           }
         }
         return false
+      }
+    },
+    computed: {
+      cachedLabel() {
+        return this.freshest ? 'Request Latest Version' : 'Request Cached Version'
       }
     },
     mounted() {
