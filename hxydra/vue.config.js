@@ -34,6 +34,12 @@ module.exports = {
       template: 'public/kondo_reportlist.html',
       title: 'Reports List',
       chunks: ['chunk-vendors', 'chunk-common', 'kondo_reportlist']
+    },
+    'kondo_reportview': {
+      entry: './src/pages/kondo_reportview/main.js',
+      template: 'public/kondo_reportview.html',
+      title: 'Report View',
+      chunks: ['chunk-vendors', 'chunk-common', 'kondo_reportview']
     }
   }
 }

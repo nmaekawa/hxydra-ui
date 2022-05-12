@@ -297,7 +297,7 @@
     },
     computed: {
       cachedLabel() {
-        return this.freshest ? 'Request Latest Version' : 'Request Cached Version'
+        return this.freshest ? 'Requesting Latest Version' : 'Requesting Cached Version'
       }
     },
     mounted() {

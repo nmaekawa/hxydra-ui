@@ -26,6 +26,7 @@
       <v-card-title class="justify-center">
         {{ selected_report_title }}
       </v-card-title>
+      <v-card-text align="center">Last updated: 2022-05-11 11:35AM <v-spacer /><v-btn @click="refresh">Refresh Data</v-btn></v-card-text>
         <v-container v-if="loading">
           <v-row>
             <v-col align="center">
@@ -99,6 +100,8 @@
       loading: false,
       selected_report_title: "Select Report Above to View Online",
       search: '',
+      selected_report_url: "",
+      selected_report_freshest: false,
     }),
     methods: {
       async viewOnline(urlLink, selected_report) {
@@ -142,6 +145,10 @@
           this.loading = false
         })
       },
+      refresh() {
+        this.selected_report_freshest = true
+        this.viewOnline(this.api_domain + this.selected_report_url + '?format=json&freshest=' + this.selected_report_freshest, this.selected_report_title)
+      },
       filter (value, search) {
         if (value && search) {
           if (typeof(value) !== "undefined") {
@@ -164,6 +171,8 @@
           if(tmp.length == 2)
             getVars[tmp[0]] = tmp[1];
         });
+        this.selected_report_url = getVars['url']
+        this.selected_report_freshest = getVars['freshest'] == 'true'
         this.viewOnline(this.api_domain + getVars['url'] + '?format=json&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
       }
     }
