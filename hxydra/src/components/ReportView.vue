@@ -26,7 +26,7 @@
       <v-card-title class="justify-center">
         {{ selected_report_title }}
       </v-card-title>
-      <v-card-text align="center">Last updated: 2022-05-11 11:35AM <v-spacer /><v-btn @click="refresh">Refresh Data</v-btn></v-card-text>
+      <v-card-text align="center">Last updated: {{last_updated}} <v-spacer /><v-btn @click="refresh" class="mt-2">Refresh Data</v-btn></v-card-text>
         <v-container v-if="loading">
           <v-row>
             <v-col align="center">
@@ -97,6 +97,7 @@
       loadProgress: 0,
       tableHeaders: [],
       tableData: [],
+      last_updated: '2022-05-11 11:35AM',
       loading: false,
       selected_report_title: "Select Report Above to View Online",
       search: '',
@@ -126,6 +127,18 @@
             }
           }
         ).then(res => {
+          console.log(res.headers['content-disposition'])
+          try {
+            const re = /.*(\d{4}-\d{2}-\d{2})\.json/
+            let reMatches = res.headers['content-disposition'].match(re)
+            if (reMatches.length > 1) {
+              this.last_updated = reMatches[1]
+            } else {
+              this.last_updated = 'Unknown (Response Pattern Changed)'
+            }
+          } catch (e) {
+            this.last_updated = 'Unknown (Not included in reponse)'
+          }
           let data_found = res.data
           this.tableHeaders = []
           if(data_found.length > 0) {

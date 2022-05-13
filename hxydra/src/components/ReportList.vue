@@ -60,6 +60,7 @@
             sm="5"
           >
             <h3 style="margin-right:20px;">{{item.description}}</h3>
+            <p v-if="item.last_updated">(Last Updated: {{item.last_updated}})</p>
           </v-col>
           <v-col
             cols="4"
