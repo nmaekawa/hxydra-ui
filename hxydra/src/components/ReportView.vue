@@ -129,10 +129,10 @@
         ).then(res => {
           console.log(res.headers['content-disposition'])
           try {
-            const re = /.*(\d{4}-\d{2}-\d{2})\.json/
+            const re = /.*(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}-\d{2}:\d{2})\.json/
             let reMatches = res.headers['content-disposition'].match(re)
             if (reMatches.length > 1) {
-              this.last_updated = reMatches[1]
+              this.last_updated = new Date(reMatches[1]).toLocaleString()
             } else {
               this.last_updated = 'Unknown (Response Pattern Changed)'
             }
