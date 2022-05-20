@@ -57,20 +57,20 @@
         >
           <v-col
             cols="12"
-            sm="5"
+            sm="4"
           >
             <h3 style="margin-right:20px;">{{item.description}}</h3>
-            <p v-if="item.last_updated">(Last Updated: {{item.last_updated}})</p>
           </v-col>
           <v-col
             cols="4"
-            sm="2"
+            sm="3"
             align="center"
           >
             <v-btn
               @click="downloadUrl(api_domain + item.url + '?format=csv&freshest=' + freshest, item.description + '.csv')"
               class="mr-5"
             ><v-icon>mdi-download</v-icon> CSV</v-btn>
+            <p class="text-caption" v-if="item.last_updated">Last Updated:<br> {{new Date(item.last_updated.csv).toLocaleString()}}</p>
           </v-col>
           <v-col
             cols="4"
@@ -81,6 +81,7 @@
               @click="downloadUrl(api_domain + item.url + '?format=json&freshest=' + freshest, item.description + '.json')"
               class="mr-5"
             ><v-icon>mdi-download</v-icon> JSON</v-btn>
+            <p class="text-caption" v-if="item.last_updated">Last Updated:<br> {{new Date(item.last_updated.json).toLocaleString()}}</p>
           </v-col>
           <v-col
             cols="4"
