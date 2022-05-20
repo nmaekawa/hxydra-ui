@@ -70,7 +70,7 @@
               @click="downloadUrl(api_domain + item.url + '?format=csv&freshest=' + freshest, item.description + '.csv')"
               class="mr-5"
             ><v-icon>mdi-download</v-icon> CSV</v-btn>
-            <p class="text-caption" v-if="item.last_updated">Last Updated:<br> {{new Date(item.last_updated.csv).toLocaleString()}}</p>
+            <p class="text-caption" v-if="item.last_updated && !freshest">Last Updated:<br> {{new Date(item.last_updated.csv).toLocaleString()}}</p>
           </v-col>
           <v-col
             cols="4"
@@ -81,7 +81,7 @@
               @click="downloadUrl(api_domain + item.url + '?format=json&freshest=' + freshest, item.description + '.json')"
               class="mr-5"
             ><v-icon>mdi-download</v-icon> JSON</v-btn>
-            <p class="text-caption" v-if="item.last_updated">Last Updated:<br> {{new Date(item.last_updated.json).toLocaleString()}}</p>
+            <p class="text-caption" v-if="item.last_updated && !freshest">Last Updated:<br> {{new Date(item.last_updated.json).toLocaleString()}}</p>
           </v-col>
           <v-col
             cols="4"
