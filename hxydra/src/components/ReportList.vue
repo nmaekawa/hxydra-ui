@@ -59,7 +59,7 @@
             cols="12"
             sm="4"
           >
-            <h3 style="margin-right:20px;">{{item.description}}</h3>
+            <h3>{{item.description}}</h3>
           </v-col>
           <v-col
             cols="4"
@@ -68,7 +68,6 @@
           >
             <v-btn
               @click="downloadUrl(api_domain + item.url + '?format=csv&freshest=' + freshest, item.description + '.csv')"
-              class="mr-5"
             ><v-icon>mdi-download</v-icon> CSV</v-btn>
             <p class="text-caption" v-if="item.last_updated && !freshest">Last Updated:<br> {{new Date(item.last_updated.csv).toLocaleString()}}</p>
           </v-col>
@@ -79,7 +78,6 @@
           >
             <v-btn
               @click="downloadUrl(api_domain + item.url + '?format=json&freshest=' + freshest, item.description + '.json')"
-              class="mr-5"
             ><v-icon>mdi-download</v-icon> JSON</v-btn>
             <p class="text-caption" v-if="item.last_updated && !freshest">Last Updated:<br> {{new Date(item.last_updated.json).toLocaleString()}}</p>
           </v-col>
