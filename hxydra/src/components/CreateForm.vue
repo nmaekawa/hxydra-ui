@@ -86,12 +86,12 @@
         </v-row>
         <v-row>
           <v-col class="col-12">
-            <v-text-field
+            <v-combobox
               v-model="common_project_name"
-              label="Common Name"
-              :rules="titleRules"
-              required
-            ></v-text-field>
+              :items="commonNames"
+              label="Common Project Name"
+            >
+            </v-combobox>
           </v-col>
         </v-row>
         <v-row>
@@ -275,13 +275,24 @@
       errorMessage: "",
       errorBox: false,
       approx_date: "",
-      api_url: process.env.VUE_APP_KONDO_API_URL + "project/"
+      commonNames: [],
+      api_url: process.env.VUE_APP_KONDO_API_URL + "project/",
+      api_base: process.env.VUE_APP_KONDO_API_URL,
     }),
+    mounted() {
+      this.getCommonNames()
+    },
     methods: {
       preventNonNums (event) {
         if ('0123456789-'.indexOf(event.key) == -1 &&event.key != 'Tab' && event.key != 'Ctrl' && event.key != 'Alt' && event.key != 'Shift' && event.key != 'Backspace' && event.key != 'Delete') {
           event.preventDefault()
         }
+      },
+      getCommonNames () {
+        axios.get(this.api_base + 'projectcommonname/')
+          .then(data => {
+            this.commonNames = data.data.map(e => e.name)
+          })
       },
       createProject () {
         console.log(this.api_url, this.$refs.createform)
