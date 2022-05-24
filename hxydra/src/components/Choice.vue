@@ -308,6 +308,10 @@
       newEmail: [],
       newAffiliation: [],
       setup_options: [{
+        'proper_name': 'Project Common Name',
+        'tech_name': 'projectcommonname',
+        'key': 'name',
+      },{
         'proper_name': 'Enrollment Type',
         'tech_name': 'enrollmenttype',
         'key': 'name',
