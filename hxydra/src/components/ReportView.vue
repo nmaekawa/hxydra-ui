@@ -156,6 +156,10 @@
           }
           this.tableData = data_found
           this.loading = false
+        }).catch( e => {
+            this.errorBox = true
+            this.errorMessage = "API could not be reached."
+            console.log(e)
         })
       },
       refresh() {
