@@ -48,6 +48,26 @@
         </template>
         <span>Create New Project</span>
       </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{on, attrs}">
+          <v-btn
+            class="mx-1"
+            fab
+            dark
+            small
+            href="/kondo_reportlist/"
+            color="#483682 accent"
+            v-bind="attrs"
+            v-on="on"
+            disabled
+          >
+            <v-icon>
+              mdi-download
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>Download Reports</span>
+      </v-tooltip>
       <v-tooltip bottom v-if="write_perm">
         <template v-slot:activator="{on, attrs}">
           <v-btn

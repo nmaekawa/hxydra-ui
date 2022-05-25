@@ -69,6 +69,26 @@
         </template>
         <span>Download Reports</span>
       </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{on, attrs}">
+          <v-btn
+            class="mx-1"
+            fab
+            dark
+            small
+            href="/kondo_choice/"
+            color="#483682 accent"
+            v-bind="attrs"
+            v-on="on"
+            disabled
+          >
+            <v-icon>
+              mdi-cog
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>Config Dropdown Lists</span>
+      </v-tooltip>
     </v-app-bar>
 
     <v-main>

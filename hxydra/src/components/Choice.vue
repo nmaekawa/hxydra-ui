@@ -188,7 +188,7 @@
         </v-container>
       </v-card>
     </v-dialog>
-    <v-dialog
+    <!-- <v-dialog
       v-model="debugDialog"
       max-width="600px"
     >
@@ -240,7 +240,7 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
   </v-container>
 </template>
 

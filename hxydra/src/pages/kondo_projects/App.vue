@@ -10,6 +10,26 @@
       </div>
 
       <v-spacer></v-spacer>
+      <v-tooltip bottom>
+        <template v-slot:activator="{on, attrs}">
+          <v-btn
+            class="mx-1"
+            fab
+            dark
+            small
+            href="/kondo_projects"
+            color="#483682 accent"
+            v-bind="attrs"
+            v-on="on"
+            disabled
+          >
+            <v-icon>
+              mdi-home
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>Home</span>
+      </v-tooltip>
       <v-tooltip bottom v-if="write_perm">
         <template v-slot:activator="{on, attrs}">
           <v-btn
