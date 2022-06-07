@@ -88,6 +88,7 @@
               v-model="common_project_name"
               :items="commonNames"
               label="Common Project Name"
+              :rules="commonRules"
             />
           </v-col>
         </v-row>
@@ -335,7 +336,13 @@
         rules.push(ruleMin)
         rules.push(ruleMax)
         return rules
-      }
+      },
+      commonRules() {
+        const rules = []
+        const ruleNotEmpty = v => (v || '').length > 0 || 'Project Common Name must not be left empty'
+        rules.push(ruleNotEmpty)
+        return rules
+      },
     },
     mounted() {
       this.getCommonNames()

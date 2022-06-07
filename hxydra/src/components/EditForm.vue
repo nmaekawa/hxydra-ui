@@ -297,7 +297,7 @@
                       prepend-icon="mdi-calendar-month"
                       :value="appOpenDateDisplay"
                       clearable
-                      :rules="dateRules"
+                      :rules="applicationDateAfterRule"
                       v-on="on"
                       @click:clear="course.application_open_date = ''"
                       @change="appOpenTxtUpdate"
@@ -330,7 +330,7 @@
                       prepend-icon="mdi-calendar-month"
                       :value="appCloseDateDisplay"
                       clearable
-                      :rules="dateRules"
+                      :rules="applicationDateBeforeRule"
                       v-on="on"
                       @click:clear="course.application_close_date = ''"
                       @change="appCloseTxtUpdate"
@@ -860,6 +860,26 @@
         const ruleDateInput = v => !v || (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
         const ruleAddLaunch = v => !v || (v && (this.course.launch_date !== null) && (this.course.launch_date !== undefined) && (this.course.launch_date !== '')) || 'Must add launch date'
         const ruleBef = v => !v || v >= this.getDate(this.course.launch_date) || 'Date should not be before Launch Date'
+        rules.push(ruleDateInput)
+        rules.push(ruleAddLaunch)
+        rules.push(ruleBef)
+        return rules
+      },
+      applicationDateAfterRule () {
+        const rules = []
+        const ruleDateInput = v => !v || (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
+        const ruleAddEnd = v => !v || (v && (this.course.application_close_date !== null) && (this.course.application_close_date !== undefined) && (this.course.application_close_date !== '')) || 'Must add close date'
+        const ruleAft = v => !v || v <= this.getDate(this.course.application_close_date) || 'Date should not be after Close Date'
+        rules.push(ruleDateInput)
+        rules.push(ruleAddEnd)
+        rules.push(ruleAft)
+        return rules
+      },
+      applicationDateBeforeRule () {
+        const rules = []
+        const ruleDateInput = v => !v || (v.match(/^\d{4}-\d{2}-\d{2}$/)!== null) || 'Date must match YYYY-MM-DD pattern'
+        const ruleAddLaunch = v => !v || (v && (this.course.application_open_date !== null) && (this.course.application_open_date !== undefined) && (this.course.application_open_date !== '')) || 'Must add open date'
+        const ruleBef = v => !v || v >= this.getDate(this.course.application_open_date) || 'Date should not be before open date'
         rules.push(ruleDateInput)
         rules.push(ruleAddLaunch)
         rules.push(ruleBef)
