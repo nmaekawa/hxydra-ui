@@ -1,5 +1,9 @@
 <template>
-  <v-container fluid pl-10 pr-10>
+  <v-container
+    fluid
+    pl-10
+    pr-10
+  >
     <v-snackbar
       v-model="errorBox"
       top
@@ -20,7 +24,7 @@
     </v-snackbar>
     <v-card>
       <v-card-title>
-        Eagle<v-icon>mdi-eye</v-icon>&nbsp;&nbsp;Comments
+        Eagle <v-icon>mdi-eye</v-icon>&nbsp;&nbsp;Comments
       </v-card-title>
       <v-data-table
         :items="comments"
@@ -49,7 +53,7 @@
             outlined
           />
           <v-container>
-            <v-row>
+            <v-row v-if="!usersearch">
               <v-menu
                 ref="menu"
                 v-model="menu"
@@ -58,23 +62,23 @@
                 offset-y
                 min-width="auto"
               >
-                <template v-slot:activator="{ on, attrs }">
+                <template #activator="{ on, attrs }">
                   <v-text-field
                     v-model="start_date"
                     label="Filter Start date"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
-                    v-on="on"
                     class="mr-5"
-                  ></v-text-field>
+                    v-on="on"
+                  />
                 </template>
                 <v-date-picker
                   v-model="start_date"
                   :active-picker.sync="activePicker"
                   :max="end_date"
                   min="1950-01-01"
-                ></v-date-picker>
+                />
               </v-menu>
               <v-menu
                 ref="menu2"
@@ -84,33 +88,50 @@
                 offset-y
                 min-width="auto"
               >
-                <template v-slot:activator="{ on, attrs }">
+                <template #activator="{ on, attrs }">
                   <v-text-field
                     v-model="end_date"
                     label="Fiter End date"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
-                    v-on="on"
                     class="mr-5"
-                  ></v-text-field>
+                    v-on="on"
+                  />
                 </template>
                 <v-date-picker
                   v-model="end_date"
                   :active-picker.sync="activePicker2"
                   :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
                   :min="start_date"
-                ></v-date-picker>
+                />
               </v-menu>
               <v-btn
                 color="#EBB352"
                 dark
                 @click="getComments"
-              >Change Date Range</v-btn>
+              >
+                Change Date Range
+              </v-btn>
+            </v-row>
+            <v-row>
+              <v-btn
+                @click="resetSearch"
+              >
+                Reset Search/Filter
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn>
+                View Only Flagged
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn>
+                Include already Moderated Comments
+              </v-btn>
             </v-row>
           </v-container>
         </template>
-        <template v-slot:[`item.actions`]="{ item }">
+        <template #[`item.actions`]="{ item }">
           <v-icon
             small
             class="mr-2"
@@ -125,21 +146,19 @@
             mdi-flag
           </v-icon>
         </template>
+        <template #[`item.comment_author`]="{ item }">
+          <v-btn
+            icon
+            color="#EBB342"
+            @click="getAllUser(item.comment_author)"
+          >
+            <v-icon>mdi-eye</v-icon>
+          </v-btn>{{ item.comment_author }}
+        </template>
       </v-data-table>
     </v-card>
   </v-container>
 </template>
-<style>
-  .item-row-seen, .item-row-seen:hover {
-    background: #C8E6C9!important;
-  }
-  .item-row-flagged, .item-row-flagged:hover {
-    background: #FFCDD2!important;
-  }
-  .v-data-table__empty-wrapper {
-    text-align: left!important;
-  }
-</style>
 <script>
   import axios from 'axios'
   let perms = false
@@ -168,6 +187,7 @@
       end_date: null,
       activePicker: null,
       activePicker2: null,
+      usersearch: false,
       menu: null,
       menu2: null,
       loading: false,
@@ -212,7 +232,7 @@
         text: 'Comment Author',
         sortable: true,
         value: 'comment_author',
-        width: '150px'
+        width: '250px'
       }, {
         text: 'Original Response Author',
         sortable: false,
@@ -255,13 +275,27 @@
         let startD = new Date(endD - 12096e5)
         this.start_date = startD.toISOString().substring(0, 10)
       },
-      async getComments () {
+      async resetSearch() {
+        this.getTwoWeekRange()
+        await this.getComments()
+        this.usersearch = false
+      },
+      async getAllUser(username) {
+        let user_param = "&username=" + username
+        await this.getComments(user_param)
+        this.usersearch = true
+      },
+      async getComments (param_append) {
         const self = this
         if (!axios) {
           return
         }
 
         let params = "?start=" + this.start_date + "&end=" + this.end_date
+        if (param_append && typeof(param_append) == 'string'){
+          params += param_append
+        }
+        
         self.comments = [];
         self.loading = true;
         await axios.get(
@@ -277,12 +311,13 @@
                   'comment_date_created': comment.comments_date_created,
                   'program_wave': comment.program_name + ' > ' + comment.wave_name,
                   'breadcrumbs': comment.module_name + ' > ' + comment.lesson_name + " > " + comment.concept_name,
-                  'tei': comment.tei_name + ' > ' + comment.tei_type,
+                  'tei': comment.tei_name + ' [' + comment.tei_type + ']',
                   'response_text': comment.response_text,
                   'response_text_author': comment.email,
                   'seen': false,
                   'flagged': false,
                 })
+                axios.get(self.api_eaglei_url + '/mod/')
               })
             }
             self.loading = false;
@@ -296,3 +331,14 @@
     }
   }
 </script>
+<style>
+  .item-row-seen, .item-row-seen:hover {
+    background: #C8E6C9!important;
+  }
+  .item-row-flagged, .item-row-flagged:hover {
+    background: #FFCDD2!important;
+  }
+  .v-data-table__empty-wrapper {
+    text-align: left!important;
+  }
+</style>
