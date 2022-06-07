@@ -43,6 +43,12 @@ module.exports = {
       template: 'public/kondo_reportview.html',
       title: 'Report View',
       chunks: ['chunk-vendors', 'chunk-common', 'kondo_reportview']
+    },
+    'eaglei_moderate': {
+      entry: './src/pages/eaglei_moderate/main.js',
+      template: 'public/eaglei_moderate.html',
+      title:'EagleI Moderate',
+      chunks: ['chunk-vendors', 'chunk-common', 'eaglei_moderate']
     }
   }
 }
