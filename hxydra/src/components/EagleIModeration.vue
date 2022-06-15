@@ -259,10 +259,6 @@
       filter (value, search) {
         if (value && search) {
           if (typeof(value) !== "undefined") {
-            console.log(value, search)
-            // if (this.onlyFlagged){
-            //   return value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) > -1
-            // }
             return value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) > -1
           }
         }
@@ -280,23 +276,19 @@
           itemclass += ' hide1'
           itemclass = itemclass.trim()
         }
-        console.log(itemclass, item.flagged, this.onlyFlagged)
         return itemclass
       },
       seeComment (item) {
         item.seen = !item.seen
         item.flagged = false
         this.updateComment(item)
-        console.log(item)
       },
       flagComment(item) {
         item.seen = false
         item.flagged = !item.flagged
         this.updateComment(item)
-        console.log(item.flagged)
       },
       updateComment(item) {
-        console.log(item.comment_date_created)
         axios.post(this.api_eaglei_url + 'mod/', {
           'cid': item.comment_id,
           'flagged': item.flagged,
@@ -328,10 +320,8 @@
         if (data.length == 0 || self.comments.length == 0) {
           return
         }
-        console.log(data)
         data.forEach(function(comm) {
           let foundInd = self.comments.findIndex(view_comm => view_comm.comment_id == comm.comment_id)
-          console.log(foundInd)
           if (foundInd > -1) {
             let foundObj = self.comments[foundInd]
             foundObj.flagged = comm.flagged
