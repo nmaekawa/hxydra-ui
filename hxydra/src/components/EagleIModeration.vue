@@ -114,18 +114,26 @@
                 Change Date Range
               </v-btn>
             </v-row>
-            <v-row>
+            <v-row
+              class="pb-10"
+            >
               <v-btn
                 @click="resetSearch"
               >
                 Reset Search/Filter
               </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn>
+              <v-spacer />
+              <v-btn
+                @click="onlyFlagged = !onlyFlagged"
+                :color="onlyFlagged ? '#EBB352' : ''"
+              >
                 View Only Flagged
               </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn>
+              <v-spacer />
+              <v-btn
+                @click="showAll = !showAll"
+                :color="showAll? '#EBB352' : ''"
+              >
                 Include already Moderated Comments
               </v-btn>
             </v-row>
@@ -191,8 +199,11 @@
       menu: null,
       menu2: null,
       loading: false,
+      onlyFlagged: false,
+      showAll: false,
       api_eaglei_url: process.env.VUE_APP_EAGLEI_API_URL,
       comments: [],
+      current_moderator: '',
       tableHeaders: [{
         text: 'Actions',
         sortable: false,
@@ -248,26 +259,53 @@
       filter (value, search) {
         if (value && search) {
           if (typeof(value) !== "undefined") {
+            console.log(value, search)
+            // if (this.onlyFlagged){
+            //   return value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) > -1
+            // }
             return value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) > -1
           }
         }
-        return false
+        return falsex
       },
       itemBackground (item) {
         let itemclass = ""
-        itemclass = item.seen ? 'item-row-seen' : ''
+        if (!this.showAll) {
+          itemclass = item.seen ? 'item-row-seen hide1' : ''
+        } else {
+          itemclass = item.seen ? 'item-row-seen' : ''
+        }
         itemclass = item.flagged ? 'item-row-flagged' : itemclass
+        if (!item.flagged && this.onlyFlagged) {
+          itemclass += ' hide1'
+          itemclass = itemclass.trim()
+        }
+        console.log(itemclass, item.flagged, this.onlyFlagged)
         return itemclass
       },
       seeComment (item) {
         item.seen = !item.seen
         item.flagged = false
+        this.updateComment(item)
         console.log(item)
       },
       flagComment(item) {
         item.seen = false
         item.flagged = !item.flagged
+        this.updateComment(item)
         console.log(item.flagged)
+      },
+      updateComment(item) {
+        console.log(item.comment_date_created)
+        axios.post(this.api_eaglei_url + 'mod/', {
+          'cid': item.comment_id,
+          'flagged': item.flagged,
+          'moderated': item.seen,
+          'moderated_by': this.current_moderator,
+          'moderated_date': new Date().toISOString().substring(0, 10),
+          'moderated_reason': '',
+          'comment_created_date': item.comment_date_created
+        })
       },
       getTwoWeekRange() {
         let endD =  new Date()
@@ -284,6 +322,25 @@
         let user_param = "&username=" + username
         await this.getComments(user_param)
         this.usersearch = true
+      },
+      sync_view(data) {
+        const self = this
+        if (data.length == 0 || self.comments.length == 0) {
+          return
+        }
+        console.log(data)
+        data.forEach(function(comm) {
+          let foundInd = self.comments.findIndex(view_comm => view_comm.comment_id == comm.comment_id)
+          console.log(foundInd)
+          if (foundInd > -1) {
+            let foundObj = self.comments[foundInd]
+            foundObj.flagged = comm.flagged
+            foundObj.seen = comm.moderated
+            if(foundInd < self.comments.length) {
+              self.$set(self.comments, foundInd, foundObj)
+            }
+          }
+        })
       },
       async getComments (param_append) {
         const self = this
@@ -316,8 +373,11 @@
                   'response_text_author': comment.email,
                   'seen': false,
                   'flagged': false,
+                  'comment_id': comment.comments_id,
                 })
-                axios.get(self.api_eaglei_url + '/mod/')
+              })
+              axios.get(self.api_eaglei_url + "mod/" + params).then(data => {
+                self.sync_view(data.data)
               })
             }
             self.loading = false;
@@ -337,6 +397,10 @@
   }
   .item-row-flagged, .item-row-flagged:hover {
     background: #FFCDD2!important;
+  }
+  .hide1 {
+    display: none!important;
+    /*visibility: hidden !important;*/
   }
   .v-data-table__empty-wrapper {
     text-align: left!important;
