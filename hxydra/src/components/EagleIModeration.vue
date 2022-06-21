@@ -124,15 +124,15 @@
               </v-btn>
               <v-spacer />
               <v-btn
-                @click="onlyFlagged = !onlyFlagged"
                 :color="onlyFlagged ? '#EBB352' : ''"
+                @click="onlyFlagged = !onlyFlagged"
               >
                 View Only Flagged
               </v-btn>
               <v-spacer />
               <v-btn
-                @click="showAll = !showAll"
                 :color="showAll? '#EBB352' : ''"
+                @click="showAll = !showAll"
               >
                 Include already Moderated Comments
               </v-btn>
@@ -170,18 +170,28 @@
 <script>
   import axios from 'axios'
   let perms = false
+
+  // cookie has permissions setting from Django
+  // this is purely for UI purposes, middleware
+  // in backend handles a second layer of authorization
   try {
     const cookie = document.cookie
     if (typeof(cookie) !== "undefined") {
       let cookie_split = cookie.split(';').map(x => x.split('='))
       let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
+      
+      // after the value of the cookie is retrieved, we check for
+      // the value "eaglei-editor" which denote user has permissions
       if (perm_cookie_val.length > 0) {
         perms = perm_cookie_val[0][1].trim().indexOf('eaglei-editor') > -1
       }
+
+      //TODO: try to get the current_moderator this same way?
     }
   } catch {
     perms = false
   }
+
   export default {
     name: 'EagleIModeration',
     components: {
@@ -252,11 +262,16 @@
       }]
     }),
     mounted() {
+      // this could be changed if bigger range is needed
       this.getTwoWeekRange();
+
+      // triggers both the call to make the Snowflake Query
+      // and the call to the db containing mod info
       this.getComments();
     },
     methods: {
       filter (value, search) {
+        // need to make sure that search is case-insensitive
         if (value && search) {
           if (typeof(value) !== "undefined") {
             return value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) > -1
@@ -265,13 +280,23 @@
         return falsex
       },
       itemBackground (item) {
+        // returns proper class (and therefore UI) per row
+        // given the values of that row
         let itemclass = ""
+
+        // seen/moderated rows should be hidden unless person
+        // specifically asks to see already-moderated comments
         if (!this.showAll) {
           itemclass = item.seen ? 'item-row-seen hide1' : ''
         } else {
           itemclass = item.seen ? 'item-row-seen' : ''
         }
+
+        // flagged should show regardless
         itemclass = item.flagged ? 'item-row-flagged' : itemclass
+        
+        // if a person only wants to see items that are flagged
+        // everything else is hidden
         if (!item.flagged && this.onlyFlagged) {
           itemclass += ' hide1'
           itemclass = itemclass.trim()
@@ -279,16 +304,24 @@
         return itemclass
       },
       seeComment (item) {
+        // UI changes before update are made to db
+        // TODO: change this once exceptions are handled
         item.seen = !item.seen
         item.flagged = false
         this.updateComment(item)
       },
       flagComment(item) {
+        // UI changes before update are made to db
+        // TODO: change this once exceptions are handled
         item.seen = false
         item.flagged = !item.flagged
         this.updateComment(item)
       },
       updateComment(item) {
+
+        // everything is sent to db
+        // need to figure out how to handle current_moderator
+        // TODO: only if necessary, moderated_reason should be updated
         axios.post(this.api_eaglei_url + 'mod/', {
           'cid': item.comment_id,
           'flagged': item.flagged,
@@ -297,29 +330,42 @@
           'moderated_date': new Date().toISOString().substring(0, 10),
           'moderated_reason': '',
           'comment_created_date': item.comment_date_created
+        }).catch(e => {
+          self.errorBox = true
+          self.errorMessage = `API could not be reached.`
+          console.log(e)
         })
       },
       getTwoWeekRange() {
+        // gets the date range of the last two weeks
+        // uses format YYYY-MM-DD
         let endD =  new Date()
         this.end_date = endD.toISOString().substring(0, 10)
         let startD = new Date(endD - 12096e5)
         this.start_date = startD.toISOString().substring(0, 10)
       },
       async resetSearch() {
+        // makes sure that when reset is hit things change
+        // back to their default
         this.getTwoWeekRange()
         await this.getComments()
         this.usersearch = false
       },
       async getAllUser(username) {
+        // allows retrieval by username
+        // usersearch triggers UI changes
         let user_param = "&username=" + username
         await this.getComments(user_param)
         this.usersearch = true
       },
       sync_view(data) {
         const self = this
+        // no point in going through rest of the sync
+        // if either/both data sets is/are empty
         if (data.length == 0 || self.comments.length == 0) {
           return
         }
+
         data.forEach(function(comm) {
           let foundInd = self.comments.findIndex(view_comm => view_comm.comment_id == comm.comment_id)
           if (foundInd > -1) {
@@ -368,6 +414,10 @@
               })
               axios.get(self.api_eaglei_url + "mod/" + params).then(data => {
                 self.sync_view(data.data)
+              }).catch(e => {
+                self.errorBox = true
+                self.errorMessage = `API could not be reached.`
+                console.log(e)
               })
             }
             self.loading = false;
