@@ -318,7 +318,10 @@
         this.updateComment(item)
       },
       updateComment(item) {
-
+        // next line for testing purposes
+        if (!axios) {
+          return
+        }
         // everything is sent to db
         // need to figure out how to handle current_moderator
         // TODO: only if necessary, moderated_reason should be updated
@@ -365,13 +368,15 @@
         if (data.length == 0 || self.comments.length == 0) {
           return
         }
-
         data.forEach(function(comm) {
           let foundInd = self.comments.findIndex(view_comm => view_comm.comment_id == comm.comment_id)
           if (foundInd > -1) {
+            // since this runs regardless of what is changed
+            // both flagged and seen get updated even if unchanged
             let foundObj = self.comments[foundInd]
             foundObj.flagged = comm.flagged
             foundObj.seen = comm.moderated
+            // tells vue an update was made and should redraw UI
             if(foundInd < self.comments.length) {
               self.$set(self.comments, foundInd, foundObj)
             }
@@ -380,15 +385,20 @@
       },
       async getComments (param_append) {
         const self = this
+        // next line for testing purposes only
         if (!axios) {
           return
         }
-
+        // while default search is parameters for start/end
+        // the param_append variable can contain changes that
+        // overwrite this and allow expanding of this function
         let params = "?start=" + this.start_date + "&end=" + this.end_date
         if (param_append && typeof(param_append) == 'string'){
           params += param_append
         }
         
+        // critical to reset in order for proper thigns to be
+        // drawn
         self.comments = [];
         self.loading = true;
         await axios.get(
@@ -398,6 +408,7 @@
             let comments_data = data.data
             if(comments_data.length > 0) {
               comments_data.forEach( function(comment) {
+                // the following can change for display purposes
                 self.comments.push({
                   'comment_text': comment.comments_text,
                   'comment_author': comment.comments_author_email,
@@ -412,6 +423,9 @@
                   'comment_id': comment.comments_id,
                 })
               })
+
+              // TODO: async this somehow...
+              // calls internal db to get moderated attrs
               axios.get(self.api_eaglei_url + "mod/" + params).then(data => {
                 self.sync_view(data.data)
               }).catch(e => {
