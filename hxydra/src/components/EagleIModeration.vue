@@ -357,7 +357,7 @@
       async getAllUser(username) {
         // allows retrieval by username
         // usersearch triggers UI changes
-        let user_param = "?start_date=null&end_date=null&username=" + username
+        let user_param = "?start=null&end=null&username=" + username
         await this.getComments(user_param)
         this.usersearch = true
       },
