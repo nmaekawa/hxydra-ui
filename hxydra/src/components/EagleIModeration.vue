@@ -357,7 +357,7 @@
       async getAllUser(username) {
         // allows retrieval by username
         // usersearch triggers UI changes
-        let user_param = "&username=" + username
+        let user_param = "?start_date=null&end_date=null&username=" + username
         await this.getComments(user_param)
         this.usersearch = true
       },
@@ -383,18 +383,18 @@
           }
         })
       },
-      async getComments (param_append) {
+      async getComments (param_replace) {
         const self = this
         // next line for testing purposes only
         if (!axios) {
           return
         }
         // while default search is parameters for start/end
-        // the param_append variable can contain changes that
+        // the param_replace variable can contain changes that
         // overwrite this and allow expanding of this function
         let params = "?start=" + this.start_date + "&end=" + this.end_date
-        if (param_append && typeof(param_append) == 'string'){
-          params += param_append
+        if (param_replace && typeof(param_replace) == 'string'){
+          params = param_replace
         }
         
         // critical to reset in order for proper thigns to be
