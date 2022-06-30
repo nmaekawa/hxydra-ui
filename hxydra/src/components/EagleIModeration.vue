@@ -402,7 +402,7 @@
         self.comments = [];
         self.loading = true;
         await axios.get(
-          self.api_eaglei_url + params
+          self.api_eaglei_url + "comment/" + params
         )
           .then(data => {
             let comments_data = data.data
